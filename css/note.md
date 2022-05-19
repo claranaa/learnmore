@@ -38,7 +38,9 @@
 
 应用场景：在浏览器页面滚动时元素的位置不会改变。
 
+#### Position属性值有哪些？
 
+ CSS Position属性值有：1、static，是position的默认值；2、fixed，生成固定定位的元素；3、absolute，生成绝对定位的元素；4、relative，生成相对定位的元素；5、inherit，继承父级属性值。 其中， inherit规定应该从父元素继承 position 属性的值。 
 
 
 
