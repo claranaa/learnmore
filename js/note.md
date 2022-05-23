@@ -34,3 +34,88 @@ this的指向，是当调用函数的时候确定的。调用方式的不同决�
 | 位置     | 存储在栈中的简单数据段，他们的值直接存储在变量访问的位置 | 存储在堆中的对象，处处在变量出的值是一个指针，指向存储对戏那个的内存处 |
 | 数据类型 | undefined、null、boolean、number、string                 | Object                                                       |
 
+### Ajax与Flash的优缺点
+
+|       | 优点                                         | 缺点                                                         |
+| ----- | -------------------------------------------- | ------------------------------------------------------------ |
+| Ajax  | 可搜索性、可开放性、易用性、易于开发         | 它可能破坏浏览器的后退功能；使用动态页面更新使得用户难于将某个特定的状态保存到收藏夹中 |
+| Flash | 多媒体处理、兼容性、矢量图形、客户端资源调度 | 二进制格式；格式私有；flash文件经常会很大，用户第一次使用的时候需要忍耐较长的等待时间；性能问题 |
+
+
+
+### 数组的API
+
+arr.filter()用于筛选出满足要求的数组元素，并返回新的数组。
+
+arr.some()用于检测数组是否有满足条件的元素，只要存在元素满足要求，则返回flase。
+
+arr.every()用于检测数组的所有元素是否都满足条件，都满足条件时返回true，否则返回flase。
+
+arr.map()会对数组中每个元素进行单独判断，返回true或者flase，作为新数组的元素。
+
+对于数组 arr = [2,20,3,12,9] 
+
+```js
+var res = arr.filter((val1,val2)=>{
+
+return val1 > 10;
+
+})
+
+console.log(res); // [20, 12]
+```
+
+```js
+var res = arr.some((val1,val2)=>{
+
+return val1 > 10;
+})
+console.log(res);  // true
+```
+
+```js
+var res = arr.every((val1,val2)=>{
+
+return val1 > 10;
+
+})
+
+console.log(res);  // false
+```
+
+```js
+var res = arr.map((val1,val2)=>{
+
+return val1 > 10;
+})
+console.log(res);  // [false, true, false, true, false]
+```
+
+
+
+### JS对象
+
+JS对象分为三大类：内置对象、宿主对象、自定义对象
+
+- JS中的内置对象
+
+  | Arguments | 函数参数集合   |
+  | --------- | -------------- |
+  | Array     | 数组           |
+  | Boolean   | 布尔对象       |
+  | Date      | 日期时间       |
+  | Error     | 异常对象       |
+  | Function  | 函数构造器     |
+  | Math      | 数学对象       |
+  | Number    | 数值对象       |
+  | Object    | 基础对象       |
+  | RegExp    | 正则表达式对象 |
+  | String    | 字符串对象     |
+
+- 宿主对象
+
+  运行环境提供的对象：如Window和Document，Element，form，image。
+
+- 自定义对象
+
+  开发人员定义的对象。
