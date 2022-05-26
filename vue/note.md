@@ -976,9 +976,9 @@ vue中的key有什么作用？（key的内部原理）
 
   （2）如需给后添加的属性做响应式，请使用如下API：
 
-  Vue.set(target, propertyName/index, value) 或
+  **Vue.set(target, propertyName/index, value)** 或
 
-  vm.$set(target, propertyName/index, value)
+  **vm.$set(target, propertyName/index, value)**
 
 - 如何监测数组中的数据？
 
@@ -1651,3 +1651,250 @@ v-cloak指令（没有值）：
 - VueComponent.propotype.__ proto__ === Vue.propotype
 - 为什么要有这个关系：让组件实例对象(vc)可以访问到Vue原型上的属性、方法。
 
+### 关于不同版本的Vue
+
+- Vue.js与vue.runtime.xxx.js的区别：
+
+  （1）Vue.js是完整版的Vue，包含：核心功能+模板解析器
+
+  （2）Vue.runtime.xxx.js是运行版的Vue，只包含：核心功能；没有模板解析器。
+
+- 因为Vue.runtime.xxx.js没有模板解析器，所以不能使用template配置项，需要使用render函数接收到createElement函数去指定具体内容(main.js)。
+
+### ref属性
+
+- 被用来给元素或子组件注册引用信息（id的替代者）
+
+- 应用在html标签上获取的是真实DOM元素，应用在组件标签上的是组件实例对象(vc)
+
+- 使用方式：
+
+  打标识：< h1 ref="xxx" >< /h1>或< School ref=“xxx”>< /School>
+
+  获取：this.$refs.xxx
+
+### props配置
+
+1. 功能：让组件接收外部传过来的数据
+
+2. 传递数据：```<Demo name="xxx"/>```
+
+3. 接收数据：
+
+   1. 第一种方式（只接收）：```props:['name'] ```
+
+   2. 第二种方式（限制类型）：```props:{name:String}```
+
+   3. 第三种方式（限制类型、限制必要性、指定默认值）：
+
+      ```js
+      props:{
+      	name:{
+      	type:String, //类型
+      	required:true, //必要性
+      	default:'老王' //默认值
+      	}
+      }
+      ```
+
+   > 备注：props是只读的，Vue底层会监测你对props的修改，如果进行了修改，就会发出警告，若业务需求确实需要修改，那么请复制props的内容到data中一份，然后去修改data中的数据。
+   >
+   > 注：props中的东西是优先被接收的，优先被放在Vuecomponent上，随后再初始化data中的数据。
+
+## mixin(混入)
+
+1. 功能：可以把多个组件共用的配置提取成一个混入对象
+
+2. 使用方式：
+
+   第一步定义混合：
+
+   ```
+   {
+       data(){....},
+       methods:{....}
+       ....
+   }
+   ```
+
+   第二步使用混入：
+
+   ​	全局混入：```Vue.mixin(xxx)```
+   ​	局部混入：```mixins:['xxx']	```
+
+## 插件
+
+1. 功能：用于增强Vue
+
+2. 本质：包含install方法的一个对象，install的第一个参数是Vue，第二个以后的参数是插件使用者传递的数据。
+
+3. 定义插件：
+
+   ```js
+   对象.install = function (Vue, options) {
+       // 1. 添加全局过滤器
+       Vue.filter(....)
+   
+       // 2. 添加全局指令
+       Vue.directive(....)
+   
+       // 3. 配置全局混入(合)
+       Vue.mixin(....)
+   
+       // 4. 添加实例方法
+       Vue.prototype.$myMethod = function () {...}
+       Vue.prototype.$myProperty = xxxx
+   }
+   ```
+
+4. 使用插件：```Vue.use()```
+
+### scoped样式
+
+1. 作用：让样式在局部生效，防止冲突
+2. 写法：< style scoped > < /style>
+3. 注意：如果没有添加scoped样式，则APP组件中后引入的子组件样式会覆盖先引入的子组件相同元素的样式；APP中的样式一般不用scoped(所有组件都在用的样式)
+
+## 总结TodoList案例
+
+1. 组件化编码流程：
+
+   ​	(1).拆分静态组件：组件要按照**功能点**拆分，命名不要与html元素冲突。
+
+   ​	(2).实现动态组件：考虑好数据的存放位置，数据是一个组件在用，还是一些组件在用：
+
+   ​			1).一个组件在用：放在组件自身即可。
+
+   ​			2). 一些组件在用：放在他们共同的父组件上（<span style="color:red">状态提升</span>）。
+
+   ​	(3).实现交互：从绑定事件开始。
+
+2. props适用于：
+
+   ​	(1).父组件 ==> 子组件 通信
+
+   ​	(2).子组件 ==> 父组件 通信（要求父先给子一个函数）（通过父组件给子组件传递函数类型的props实现：子给父传递数据）
+
+3. 使用v-model时要切记：v-model绑定的值不能是props传过来的值，因为props是不可以修改的！
+
+4. props传过来的若是对象类型的值，修改对象中的属性时Vue不会报错，但不推荐这样做。
+
+## webStorage
+
+1. 存储内容大小一般支持5MB左右（不同浏览器可能还不一样）
+
+2. 浏览器端通过 Window.sessionStorage 和 Window.localStorage 属性来实现本地存储机制。
+
+3. 相关API：
+
+   1. ```xxxxxStorage.setItem('key', 'value');```
+      				该方法接受一个键和值作为参数，会把键值对添加到存储中，如果键名存在，则更新其对应的值。
+
+   2. ```xxxxxStorage.getItem('person');```
+
+      ​		该方法接受一个键名作为参数，返回键名对应的值。
+
+   3. ```xxxxxStorage.removeItem('key');```
+
+      ​		该方法接受一个键名作为参数，并把该键名从存储中删除。
+
+   4. ``` xxxxxStorage.clear()```
+
+      ​		该方法会清空存储中的所有数据。
+
+4. 备注：
+
+   1. SessionStorage存储的内容会随着浏览器窗口关闭而消失。
+   2. LocalStorage存储的内容，需要手动清除才会消失。
+   3. ```xxxxxStorage.getItem(xxx)```如果xxx对应的value获取不到，那么getItem的返回值是null。
+   4. ```JSON.parse(null)```的结果依然是null。
+
+## 组件的自定义事件
+
+1. 一种组件间通信的方式，适用于：<strong style="color:red">子组件 ===> 父组件</strong>
+
+2. 使用场景：A是父组件，B是子组件，B想给A传数据，那么就要在A中给B绑定自定义事件（<span style="color:red">事件的回调在A中，父组件A才能收到子组件B传过来的参数</span>）。
+
+3. 绑定自定义事件：
+
+   1. 第一种方式，在父组件中：```<Demo @atguigu="test"/>```  或 ```<Demo v-on:atguigu="test"/>```
+
+   2. 第二种方式，在父组件中：
+
+      ```js
+      <Demo ref="demo"/>
+      ......
+      mounted(){
+         this.$refs.xxx.$on('atguigu',this.test) // 都需要在父组件中提前准备好test()
+      }
+      ```
+
+   3. 若想让自定义事件只能触发一次，可以使用```once```修饰符，或```$once```方法。
+
+4. 触发自定义事件：```this.$emit('atguigu',数据)```		
+
+5. 解绑自定义事件```this.$off('atguigu')```
+
+6. 组件上也可以绑定原生DOM事件，需要使用```native```修饰符。  @click.natice
+
+7. 注意：通过```this.$refs.xxx.$on('atguigu',回调)```绑定自定义事件时，回调<span style="color:red">要么配置在methods中</span>，<span style="color:red">要么用箭头函数</span>，否则this指向会出问题！
+
+## 全局事件总线（GlobalEventBus）
+
+1. 一种组件间通信的方式，适用于<span style="color:red">任意组件间通信</span>。
+
+2. 安装全局事件总线：
+
+   ```js
+   new Vue({
+   	......
+   	beforeCreate() {
+   		Vue.prototype.$bus = this //安装全局事件总线，$bus就是当前应用的vm
+   	},
+       ......
+   }) 
+   ```
+
+3. 使用事件总线：
+
+   1. 接收数据：A组件想接收数据，则在A组件中给$bus绑定自定义事件，事件的<span style="color:red">回调留在A组件自身。</span>
+
+      ```js
+      methods(){
+        demo(data){......}
+      }
+      ......
+      mounted() {
+        this.$bus.$on('xxxx',this.demo)
+      }
+      ```
+
+   2. 提供数据：```this.$bus.$emit('xxxx',数据)```
+
+4. 最好在beforeDestroy钩子中，用$off去解绑<span style="color:red">当前组件所用到的</span>事件。
+
+## 消息订阅与发布（pubsub）
+
+1. 一种组件间通信的方式，适用于<span style="color:red">任意组件间通信</span>。
+
+2. 使用步骤：
+
+   1. 安装pubsub：```npm i pubsub-js```
+
+   2. 引入: ```import pubsub from 'pubsub-js'```
+
+   3. 接收数据：A组件想接收数据，则在A组件中订阅消息，订阅的<span style="color:red">回调留在A组件自身。</span>
+
+      ```js
+      methods(){
+        demo(data){......}
+      }
+      ......
+      mounted() {
+        this.pid = pubsub.subscribe('xxx',this.demo) //订阅消息
+      }
+      ```
+
+   4. 提供数据：```pubsub.publish('xxx',数据)```
+
+   5. 最好在beforeDestroy钩子中，用```PubSub.unsubscribe(pid)```去<span style="color:red">取消订阅。</span>
