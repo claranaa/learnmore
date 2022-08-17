@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  function Father(name) {
+    this.name = name;
+    this.fruits = ['a', 'b', 'c'];
+  }
+  Father.prototype.say = function () {
+    console.log('my name is:', this.name)
+  }
+  function Son(age) {
+    this.age = age;
+  }
+  Son.prototype = new Father()
+  const son1 = new Son();
+  const son2 = new Son();
+  const father = new Father()
+  son1.fruits.push('d');
+  console.log(son1.fruits)
+  console.log(son2.fruits)
+  console.log(father.fruits);
+
+</script>
+
+</html>

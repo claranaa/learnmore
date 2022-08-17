@@ -63,7 +63,7 @@ this的指向，是当调用函数的时候确定的。调用方式的不同决�
 | Number    | 任意非零数字值（包括无穷大） | 0和Null,NaN==NaN |
 | Object    | 任意对象                     |                  |
 | null      | null==undefined              | null             |
-| Undefined |                              | Undefined        |
+| Undefined | 无                           | Undefined        |
 
 
 

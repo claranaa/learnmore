@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  class Parent {
+    constructor(name, sex) {
+      this.name = name
+      this.sex = sex
+    }
+    sing() {
+      console.log(this.sex);
+    }
+  }
+
+  class Child extends Parent {
+    song() {
+      super.sing();
+    }
+    tell() {
+      console.log(super.name);
+    }
+  }
+
+  let xx = new Child('xx', 'boy')
+
+  xx.song()  //boy
+  xx.tell()  //undefined
+</script>
+
+</html>
