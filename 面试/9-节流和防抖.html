@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    /* const eventObj = { 1: () => { } }
+
+    function clearTimeout(id) {
+      id = null
+    } */
+
+    function throttle(fn, interval) {
+      let timer;
+      return (...args) => {
+        if (timer) {
+          return false;
+        }
+
+
+        timer = setTimeout(() => {
+          //clearTimeout(timer);
+          fn(...args);
+          timer = null;
+        }, interval)
+      }
+    }
+
+
+
+    // 1. 返回值是一个函数
+    // 2. 固定间隔执行事件响应函数
+    const debounce = (fn, interval) => {
+      let timeoutId;
+      return function debouncedFn(...args) {
+        // 第一次执行的时候 timeoutId为undefined
+        // 第二次执行的时候 timeoutId 为 1
+        timeoutId && clearTimeout(timeoutId)
+        console.log('清除之后：', timeoutId)
+        // timeoutId = 1
+        // timeoutId = 2
+        timeoutId = setTimeout(() => { fn.call(this, ...args) }, interval)
+        console.log('赋值之后', timeoutId)
+
+      }
+    }
+    var i = 0;
+    /* document.onmousemove = function (event) {
+      console.log(i++);
+    } */
+    const debouncedFn = debounce(function fn(event) {
+      console.log(i++);
+    }, 100)
+    document.onmousemove = debouncedFn;
+
+    function show(a, b, c, ...args) {
+      console.log(...args);
+    }
+
+  </script>
+</body>
+
+</html>
