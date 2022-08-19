@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <ul>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+  </ul>
+  <script>
+    var lis = document.querySelectorAll('li');
+    // 方法一：给每个按钮 自定义data-index属性
+    /* for (var i = 0; i < lis.length; i++) {
+      lis[i].setAttribute('data-index', i)
+      lis[i].onclick = function () {
+        console.log(this.dataset['index'])
+      }
+    } */
+    // 方法二：存下标
+    /* for (var i = 0; i < lis.length; i++) {
+      lis[i].index = i;
+      lis[i].onclick = function () {
+        console.log(this.index)
+      }
+    } */
+    // 方法三：forEach
+    /* lis.forEach(function (item, index) {
+      item.onclick = function () {
+        console.log(index)
+      }
+    }) */
+    // 方法四：let
+    /* for (let i = 0; i < lis.length; i++) {
+      lis[i].onclick = function () {
+        console.log(i)
+      }
+    } */
+    // 方法五：闭包
+    /* for (var i = 0; i < lis.length; i++) {
+      (function (i) {
+        lis[i].onclick = function () {
+          console.log(i)
+        }
+      })(i)
+    } */
+    // 方法六 闭包
+    for (var i = 0; i < lis.length; i++) {
+      lis[i].onclick = (function (i) {
+        return function () {
+          console.log(i)
+        }
+      })(i)
+    }
+  </script>
+</body>
+
+</html>

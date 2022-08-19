@@ -1,4 +1,4 @@
-### 自我介绍
+# 自我介绍
 
 面试官您好！我是王晓娜，就读于广东工业大学。
 
@@ -1250,7 +1250,7 @@ son.say();
 
 **ES6 Class继承**
 
-主要是依靠：extends、super，该继承的效果和寄生组合继承方式一样
+主要是依靠：extends、super，该继承的效果和寄生组合继承方式一样。class也是通过构造函数模拟实现的，是一种语法糖。
 
 ```js
 // 如果子类没有定义constructor方法，这个方法会被默认添加
@@ -1415,7 +1415,7 @@ Symbol属于基本数据类型之一，Symbol()可以用来生成唯一值。
 
   优点：使用简单
 
-  缺点：功能残缺，对于原始数据类型，除了null都可以显示正确的类型typeof null == ’object‘；对于对象来说，除了函数都会显示object，所以typeof并不能准确判断变量到底是什么类型的。
+  缺点：功能残缺，对于原始数据类型，除了null都可以显示正确的类型typeof null == ’object‘；对于引用类型来说，除了函数都会显示object，所以typeof并不能准确判断变量到底是什么类型的。
 
   typeof只能准确判断7种数据类型：string、number、boolean、symbol、undefined、bigint、function。
 
@@ -1485,6 +1485,10 @@ Symbol属于基本数据类型之一，Symbol()可以用来生成唯一值。
   console.log(b.age); // 1
   ```
 
+  方法三：for in循环赋值
+
+  方法四：ES6中Array.from()复制数组，此方法复制为浅拷贝
+
   浅拷贝只解决了第一层的问题，如果接下去的值中还有对象的话，那么就又回到最开始的话题了，两者享有相同的地址，要解决这个问题，得用深拷贝。
 
 - 深拷贝拷贝多层，每一级别的数据都会拷贝
@@ -1505,8 +1509,12 @@ Symbol属于基本数据类型之一，Symbol()可以用来生成唯一值。
   console.log(b.jobs.first); // FE
   ```
 
-  方法二：自己实现一个简易版的深拷贝
+  方法二：JQuery中的extend方法
 
+  $extend([deep],target,object)
+  
+  方法三：自己实现一个简易版的深拷贝
+  
   ```js
   function deepClone(obj) {
       function isObject(o) {
@@ -1540,15 +1548,69 @@ new在执行时会做4件事：
 
 注意：没有return，默认返回的结果是实例化对象，写了return，如果是return的是简单类型，返回的结果依然是实例化对象，如果是复杂类型，则返回结果是复杂类型
 
-## 注册事件
+## 事件机制
+
+**事件触发三阶段**
+
+（1）从window往事件触发处传播，遇到注册的捕获事件会触发
+
+（2）传播到事件触发处时触发注册的事件
+
+（3）从事件触发处往window传播，遇到注册的冒泡事件会触发
+
+**注册事件**
+
+ 通常我们使用 `addEventListener` 注册事件，该函数的第三个参数可以是布尔值，也可以是对象。对于布尔值 `useCapture` 参数来说，该参数默认值为 `false` ，`useCapture` 决定了注册的事件是捕获事件还是冒泡事件。对于对象参数来说，可以使用以下几个属性 
+
+- capture：布尔值，和useCapture作用一样
+- once：布尔值，职位true表示该回调只会调用一次，调用后会移除监听
+- passive：布尔值，preventDefault表示永远不会调用
+
+ 一般来说，如果我们只希望事件只触发在目标上，这时候可以使用 `stopPropagation` 来阻止事件的进一步传播。通常我们认为 `stopPropagation` 是用来阻止事件冒泡的，其实该函数也可以阻止捕获事件。`stopImmediatePropagation` 同样也能实现阻止事件，但是还能阻止该事件目标执行别的注册事件。 
+
+注意：有些事件是不支持事件冒泡的，比如onblur、onfocus、onmouseover、onmouseleave
 
 **addEventListener与on绑定事件的区别**
 
-（1）addEventListener可以给一个事件注册多个listener，而on在同一时间只能指向唯一对象
+（1）addEventListener可以给一个元素注册多个事件，而on在同一时间只能注册一个事件
 
 （2）addEventListener使用removeEventListener进行解绑，on事件解绑需要将其设置为none
 
+**事件对象**
+
+（1）event就是一个事件对象，写在侦听函数的括号里，当形参来看
+
+（2）事件对象只有有了事件才会存在，是系统自动创建的，不需要传递参数
+
+（3）事件对象是事件的一系列相关数据的组合，比如鼠标点击事件包含了鼠标相关的信息
+
+（4）这个事件可以自己命名，比如event，evt，e等
+
+（5）事件对象也有兼容性，IE6,7,8通过window.event实现
+
+**ev.currentTarget和ev.target的区别**
+
+ev.currentTarget是绑定事件的元素(this)，而ev.target是当前触发事件的元素。
+
+eg：如果给ul元素绑定点击事件，则ev.currentTarget(this)是ul。当点击ul触发事件，ev.target是ul，当点击li触发事件，ev.target是li。
+
+阻止对象默认行为
+
+e.preventDefault()
+
+**事件代理(事件委托)**
+
+不给每个子节点单独设置事件监听器，而是设置在其父节点上，然后利用冒泡原理影响设置每个子节点。
+
+例如：给ul注册事件，然后利用事件对象的target来找到当前点击的li，然后事件冒泡到ul上，ul有注册事件，就会触发事件监听器。
+
+如果一个节点中的子节点是动态生成的，那么子节点需要注册事件的话应该注册在父节点上。
+
+优点：（1）只需要将同类元素的事件委托给父级或者更外级的元素，不需要给所有的元素都绑定事件，减少内存占用空间，提升性能 （2）不需要给子节点注销事件 （3）动态新增的元素无需重新绑定事件
+
 ## 闭包
+
+**定义**
 
 **闭包指有权访问另一个函数作用域中变量的函数。---JS高级程序设计**
 
@@ -1560,15 +1622,15 @@ new在执行时会做4件事：
 
 闭包需要满足以下特征：（1）有外层函数嵌套内层函数；（2）内层函数使用外层函数的局部变量；（3）内层函数返回外部，并且被全局变量保存。
 
-#### 作用
+**作用**
 
 延伸了变量的作用范围。
 
-#### 执行上下文
+**执行上下文**
 
 当前代码执行的一个环境与范围。
 
-#### 词法作用域
+**词法作用域**
 
 词法作用域是指内部函数在定义的时候就决定了其外部作用域。
 
@@ -1590,56 +1652,120 @@ new在执行时会做4件事：
 
 上述例子中，log( ) 函数是一个闭包，它在这里访问的是autorun()函数中的x变量，而不是run函数中的变量。autorun()的函数作用域即是log()函数的词法作用域。
 
-#### 作用域链
+**作用域链**
 
 每一个作用域链都有对其父作用域的引用。当使用一个变量的时候，JS引擎会通过变量名在当前作用域查找，若没有找到，会一直沿着作用域链一直向上查找，直到global全局作用域。
 
-#### 总结
+**总结**
 
 当一个函数被创建并从另一个函数返回时，它会携带一个背包，背包中是函数声明时作用域内的所有变量。
 
---------------------------------
-
 被闭包引用的外部作用域中的变量将一直存活直到闭包函数被销毁。如果一个变量被多个闭包所引用，那么直到所有的闭包被垃圾回收后，该变量才会被销毁。
-
--------------------------------
 
 闭包使得timer定时器，事件处理，Ajax请求等异步任务更加容易。
 
+**闭包的使用场景**
 
+（1）return 回一个函数 （2）函数作为参数 （3）自执行函数 （4）循环赋值 （5）使用回调函数就是在使用闭包 （6）节流/防抖
 
-### this指向
+**使用闭包需要注意什么**
+
+容易导致内存泄露。闭包会携带包含其他的函数作用域，因此会比其他函数占用更多的内存。过度使用闭包会导致内存占用过多，所以要谨慎使用闭包。
+
+**怎么检查内存泄露**
+
+performance面板和memory面板可以找到泄露的现象和位置
+
+## this指向
 
 this的指向，是在函数被调用的时候确定的，完全取决于函数的调用方式。
 
-#### 普通函数调用模式
+**普通函数调用模式**
 
 非严格模式中，普通函数中的this指向为全局对象window。
 
 严格模式中，普通函数中的this表现为undefined。
 
-#### 对象中的方法调用模式
+**对象中的方法调用模式**
 
 指向对象本身。
 
-#### call、apply、bind调用模式
+**new**
 
-严格模式下，绑定到指定的第一个参数。
+当使用new关键字调用函数时，函数中的this一定是JS创建的新对象(实例对象)。
 
-#### 箭头函数
+**箭头函数**
 
 箭头函数的this是在创建它时外层this的指向（根据当前的词法作用域来决定this）。
 
 - 创建箭头函数时，就已经确定了它的this指向。
-- 箭头函数内的this指向外层的this。
+- 箭头函数内的this指向外层的this指向。
 
-#### new
+**DOM事件处理函数调用**
 
-当使用new关键字调用函数时，函数中的this一定是JS创建的新对象(实例对象)。
+onclick和addEventListener中的this指向绑定事件的元素。
 
+一些浏览器，比如IE6~8下使用attachEvent，this指向window。
 
+**内联事件处理函数调用**
 
---------------------------------------
+```js
+<button class="btn1" onclick="console.log(this === document.querySelector('.btn1'))">点我呀</button> // true
+<button onclick="console.log((function(){return this})());">再点我呀</button> // window
+```
+
+**call、apply、bind调用模式**
+
+非严格模式下，指定为null和undefined的this值会自动指向全局对象（浏览器中是window对象）,其余值指向被new Object()包装的对象。
+
+严格模式下，绑定到指定的第一个参数。
+
+**call和apply的共同点**
+
+它们都能改变函数执行时的上下文，将一个对象的方法交给另一个对象来执行，并且是立即执行的。调用call和apply的对象，必须是一个函数Function。
+
+**call和apply的区别**
+
+call和apply用法类似，只是参数不一样，call可以接收任意个参数。apply的参数是数组（或者类数组）。
+
+**bind**
+
+bind方法与apply和call比较类似，也能改变函数体内的this指向。不同的是，bind方法的返回值是函数，并且需要稍后调用才会执行。而apply和call是立即调用。
+
+**call的使用场景**
+
+（1）对象的继承
+
+```js
+Father.call(this);
+```
+
+（2）借用方法(类数组借用Array原型链上的方法)
+
+```js
+// 以下代码可以实现domNodes应用Array下的所有方法
+let domNodes = Array.prototype.slice.call(document.getElementByTagName("p"))
+```
+
+apply的使用场景
+
+（1）获取数组中的最大值/最小值
+
+```js
+let max = Math.max.apply(null,array);
+let min = Math.min.apply(null,array);
+```
+
+（2）实现两个数组的合并
+
+```js
+let arr1 = [1,2,3];
+let arr2 = [4,5,6];
+Array.prototype.push.call(arr1,arr2);
+console.log(arr1); // [1,2,3,4,5,6]
+```
+
+**总结**
 
 | 调用方式     | this指向                                  |
 | ------------ | ----------------------------------------- |
@@ -1652,9 +1778,73 @@ this的指向，是在函数被调用的时候确定的，完全取决于函数�
 
 注：（1）匿名函数也指向window（2）IE中attachEvent中的this总是指向全局对象window
 
+## 事件循环
 
+**JavaScript为什么是单线程的**
+
+如果JS不是单线程的，同时有两个方法操作一个DOM节点，一个做删除任务，一个做修改任务，那么此时浏览器该听谁的？所以，为了避免复杂性，从一诞生，JS就是单线程的。但是单线程就导致很多任务需要排队，只有一个任务执行完才能执行下一个任务。如果某个执行时间太长，就容易造成阻塞；为了解决这一问题，JS引入了事件循环机制。
+
+**事件循环是什么**
+
+主线程不断从任务队列中读取事件， 每次单个宏任务执行完毕后， 检查微任务队列是否为空， 如果不为空，会按照先入先出的规则全部执行完微任务后， 清空微任务队列， 然后再执行下一个宏任务，如此循环。 这个过程是循环不断的，这种运行机制就叫做事件循环。
+
+**同步&异步**
+
+- 同步：是按顺序执行，执行完一个再执行下一个，需要等待、协调运行。
+- 异步：就是彼此独立，在等待某事件的过程中继续做自己的事，不需要等待这一事件完成后再工作。宏任务和微任务都属于异步任务
+
+**异步&多线程**
+
+两者并不是一个同等关系，异步是最终目的，多线程只是实现异步的一种手段。异步是当一个调用请求发送给被调用者，而调用者不用等待其结果的返回可以做其他的事情。实现异步可以采用多线程技术或交给另外的进程来处理。
+
+**JavaScript是如何实现异步的**
+
+JavaScript是通过事件循环(Event Loop)实现异步的。
+
+**事件循环的执行顺序**：首先JavaScript代码从上到下执行，每遇到定时器等宏任务会将任务放在宏任务队列中，遇到Promise.then等微任务会将任务放入到微任务队列中。等到主执行栈中的代码执行完毕，会清空微任务队列，先加入的先执行，后加入的后执行，然后再去检查宏任务队列，将可执行的宏任务拿到执行栈中执行，每次只取出一个宏任务，执行完毕再次清空微任务队列，清空完毕再去检查宏任务队列，以此类推。
+
+**浏览器中的宏任务**
+
+宏任务可以理解为每次执行栈执行的代码就是一个宏任务
+
+script(整体代码)，setTimeout，setInterval，setImmediate，MessageChannel，postMessage，I/O，UI render
+
+**浏览器中的微任务**
+
+微任务可以理解为在当前宏任务执行结束后立即执行的任务
+
+- promise.then：promise的then方法就是一个微任务
+- async await：async函数的await之后的内容是以微任务的形式来执行
+- MutationObserver：MutationObserver的作用是监控dom变化，dom变化了就会执行，时间节点是等待所有代码都执行完，才执行该监控
+- process.nextTick
+
+**浏览器是多线程的**
+
+JavaScript是单线程的，但浏览器是多线程的，多个线程相互配合以保持同步。
+
+**浏览器里常驻的线程**
+
+（1）JS线程 （2）GUI渲染线程(管理页面渲染，回流重绘的) （3）基本UI事件线程 （4）定时器线程 （5）异步Ajax线程
+
+**Node和浏览器的事件循环区别**
+
+ 浏览器环境下，微任务的任务队列是每个 宏任务 执行完之后执行。而在 Node.js 中，微任务会在事件循环的各个阶段之间执行，也就是一个阶段执行完毕，就会去执行微任务队列的任务。 
+
+**总结**
+
+（1）事件循环是JS引擎等待任务、执行任务、休眠的无线循环，它通过宏任务队列来接收任务，先进的先完成且一次只做一件事。
+
+（2）宏任务队列中的第一个任务是script，它最早被执行
+
+（3）当执行完宏任务后，微任务队列开始执行，然后页面渲染一次，再进行下一个宏任务
+
+（4）宏任务中，事件比定时器先进入宏任务队列（优先级更高）
+
+（5）其他线程无法像JavaScript主线程一样操作DOM
 
 # ES6
+
+ES6是新一代JS语言标准，对JS语言核心内容做了升级优化，规范了JS使用标准，新增了JS原生方法，使得JS使用更加规范，更加优雅，更适合大型应用的开发。
 
 ## let const和var的区别
 
@@ -1700,7 +1890,7 @@ let name = "Bob", time = "today";
 
 （1）语法更简洁、清新
 
-（1）箭头函数的this指向父级作用域的this（指向在定义时所处的执行环境的this）
+（1）箭头函数不会创建自己的this，而是指向父级作用域的this（指向在定义时所处的执行环境的this指向）
 
 （2）call()/.apply()/.bind()无法改变箭头函数中this的指向（箭头函数继承而来的this指向永远不变）
 
@@ -1714,13 +1904,29 @@ let name = "Bob", time = "today";
 
 （6）箭头函数不能用作Generator函数，不能使用yield关键字
 
-- 语法更简洁、清新
-- 箭头函数不会创建自己的this
-- call()、apply()、bind()无法改变箭头函数中this的指向（箭头函数继承而来的this指向永远不变）
-- 箭头函数不能作为构造函数使用
-- 箭头函数没有自己的arguments
-- 箭头函数没有原型prototype
-- 箭头函数不能用作Generator函数，不能使用yield关键字
+## rest参数
+
+rest参数(形式为“...变量名”)，用于获取函数的多余参数，这样就不需要使用arguments参数对象了。
+
+rest参数搭配的变量是一个数组，该变量将多余的参数放入数组中。
+
+与解构赋值相结合
+
+```js
+const [a,...b] = [1,2,3];
+console.log(a); // 1
+console.log(b); // [2,3]
+```
+
+与Set数据集合一起使用，实现数组去重
+
+```js
+const arr = [1,2,3,4,2,5,1];
+const [...newArr] = new Set(arr);
+console.log(newArr); // [1,2,3,4,5]
+```
+
+注意：（1）rest参数之后不能再有其他参数，即只能是最后一个参数，否则会报错。（2）函数的length属性，不包括rest参数。
 
 ## 扩展运算符
 
@@ -1756,9 +1962,80 @@ const arr4 = [...arr1, ...arr2, ...arr3]
 [...'hello']; // ["h", "e", "l", "l", "o"]
 ```
 
+（4）将伪数组转为真正的数组
+
+```js
+const divs = document.querySelectorAll('div');
+const divArr = [...divs];
+```
+
+
+
 ## Symbol
 
 ES6引入了一种新的原始类型Symbol，表示独一无二的值。它属于JS语言的原生数据类型之一，其他数据类型是：undefined、null、布尔值（Boolean）、字符串（String）、数值（Number）、大整数（BigInt）、对象（Object）。
+
+## Set
+
+Set数据结构类似数组，数组中所有的数据都是唯一的，没有重复的值，它本身是一个构造函数。
+
+Map
+
+Map是ES6引入的一种类似于Object的新的数据结构，Map可以理解为是Object的超集，打破了以传统键值对形式定义对象，对象的key不再局限于字符串，也可以是Object。可以更加全面的描述对象的属性。
+
+## for of
+
+**原生具备Iterator接口的数据结构有**
+
+Array，Map，Set，String，TypesArray，函数的arguments对象，NodeList对象
+
+因此for of不能遍历对象，因为对象没有iterable（遍历器）属性。
+
+**遍历数组/字符串**
+
+for of在遍历数组和字符串时，原型上的属性不会被遍历下来
+
+```js
+Array.prototype.c = 'c';
+const arr = [1,2,3,4];
+for(let i of arr) {
+    console.log(i);
+} // 1 2 3 4
+const str = 'abc';
+for(let i of str) {
+    console.log(i);
+} // a b c
+```
+
+**遍历Set/Map数据结构**
+
+for of在遍历Set时，与遍历数组方法相同，但在遍历Map时，只能将键和值一起遍历下来，如果只想遍历键或者值的话，i需要写成数组的形式
+
+```js
+const s = new Set([1, 2, 3, 4])
+for(let i of s ) {
+    console.log(i);
+}   // 1 2 3 4
+   
+const myMap=new Map();
+myMap.set('1', '2');
+myMap.set('3', '4');
+for(let i of myMap) {
+    console.log(i);
+}  //  [ '1', '2' ]  [ '3', '4' ]
+    
+for (let [key, value] of myMap) {
+    console.log(key + value);
+}  // 12 34
+```
+
+**与for in的区别**
+
+（1）for in遍历的是数据结构的下标(index)或者键(key)，for of遍历的是数据结构的值
+
+（2）for in可以遍历所有的数据结构，但是for of只能遍历具有Iterator属性的数据结构
+
+（3）for in遍历到数据结构自身和原型上的可枚举的属性和方法，但是for of只会遍历数据结构自身的值
 
 ## Promise
 
@@ -1788,29 +2065,132 @@ const promise = new Promise(function(resolve,rejevt) {
 })
 ```
 
-
-
-##### then的用法
+**then的用法**
 
 通过Promise.then获取处理结果，then方法可以接收两个参数，第一个对应resolve的回调，第一个对应reject的回调。Promise.then中的函数是异步执行的。
 
-##### catch的用法
+**catch的用法**
 
 和then的第二个参数一样，用来指定reject的回调。
 
 另一个作用：在执行resolve的回调时，如果抛出异常了，那么并不会报错卡死，而是会进到catch方法中执行reject的回调。
 
-##### all的用法
+**all的用法**
 
 Promise.all接收一个数组参数，里面的值最终都返回Promise对象。利用Promise.all可以并行执行多个异步操作，并且在一个回调中处理所有的返回数据。
 
-##### race的用法
+**race的用法**
 
 Promise.race()并发处理多个异步任务，只要有一个任务完成就能得到结果。
 
-### Vue
+## Async/Await
 
-#### 组件间的通信
+## 模块化
+
+## ES6其他面试题
+
+**Q1：日常前端代码开发中，有哪些值得用ES6去改进的编程优化或者规范？**
+
+A1：1、常用箭头函数来取代 var self = this;的做法。 2、常用 let 取代 var 命令。 3、常用数组/对象的结构赋值来命名变量，结构更清晰，语义更明确，可读性更好。 4、在长字符串多变量组合场合，用模板字符串来取代字符串累加，能取得更好地效果 和阅读体验。 5、用 Class 类取代传统的构造函数，来生成实例化对象。 6、在大型应用开发中，要保持 module 模块化开发思维，分清模块之间的关系，常用 import、export 方法。
+# 浏览器
+
+## **跨域**
+
+因为浏览器处于安全考虑，有同源策略。也就是说，如果两个URL的协议、域名或者端口有一个不同就是跨域。Ajax请求会失败。
+
+**解决跨域的方式**
+
+方式一：JSONP
+
+优点：使用简单，兼容性不错
+
+缺点：只限于使用get请求
+
+ JSONP 的原理很简单，就是利用script `` 标签没有跨域限制的漏洞。通过 `` script标签指向一个需要访问的地址并提供一个回调函数来接收数据当需要通讯时。 
+
+```html
+<script src="http://domain/api?param1=a&param2=b&callback=jsonp"></script>
+<script>
+    function jsonp(data) {
+    	console.log(data)
+	}
+</script>  
+```
+
+封装一个JSONP
+
+```js
+function jsonp(url, jsonpCallback, success) {
+  let script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.type = 'text/javascript'
+  window[jsonpCallback] = function(data) {
+    success && success(data)
+  }
+  document.body.appendChild(script)
+}
+jsonp('http://xxx', 'callback', function(value) {
+  console.log(value)
+})
+```
+
+方式二：CORS
+
+CORS需要浏览器和后端同时支持，IE 8 和 9需要通过XDomainRequest来实现。浏览器会自动进行CORS通信，实现CORS通信的关键是后端。只要后端实现了CORS，就实现了跨域。
+
+方式三：document.domain
+
+该方式只能用于二级域名相同的情况下，比如a.test.com和b.test.com适用于该方式。只需要给页面添加document.domain = ‘test.com’表示二级域名相同就可以实现跨域。
+
+方式四：postMessage
+
+ 这种方式通常用于获取嵌入页面中的第三方页面数据。一个页面发送消息，另一个页面判断来源并接收消息 
+
+```js
+// 发送消息端
+window.parent.postMessage('message', 'http://test.com')
+// 接收消息端
+var mc = new MessageChannel()
+mc.addEventListener('message', event => {
+  var origin = event.origin || event.originalEvent.origin
+  if (origin === 'http://test.com') {
+    console.log('验证通过')
+  }
+})
+```
+
+## 存储
+
+有几种方式可以实现存储功能，区别是什么
+
+<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1660813279402.png" alt="1660813279402" style="zoom:80%;" />
+
+ 从上表可以看到，`cookie` 已经不建议用于存储。如果没有大量数据存储需求的话，可以使用 `localStorage` 和 `sessionStorage` 。对于不怎么改变的数据尽量使用 `localStorage` 存储，否则可以用 `sessionStorage` 存储。 
+
+**DOM和BOM**
+
+DOM：                                                                           BOM                                            
+
+​			文档对象模型                                                               浏览器对象模型
+
+​			DOM就是把文档当做一个对象来看待                       把浏览器当做一个对象来看待
+
+​			DOM的顶级对象是document                                    BOM的顶级对象是window
+
+​			DOM主要学习的是操作页面元素                               BOM学习的是浏览器窗口交互的一些对象
+
+​			DOM是W3C标准规范                                                  BOM是浏览器厂商在各自浏览器上定义的，兼容性较差
+
+## 多页签通讯
+
+方法一：localstorage在一个标签页里被添加、修改或删除时，都会触发一个storage事件，通过在另一个标签页里监听storage事件，即可得到localstorage存储的值，实现不同签页之间的通信。
+
+方法二：使用cookie+setInterval，将要传递的信息存储在cookie中，每隔一定时间读取cookie信息，即可随时获取要传递的信息。
+
+# Vue
+
+## 组件间的通信
 
 props:用于父子组件通信
 插槽:父子
@@ -1820,32 +2200,34 @@ pubsub:万能，vue当中几乎不用
 Vuex:万能
 $ref:父子通信
 
-#### 路由
+## 路由
 
 
 
-### Node.js常用模块
+# Node.js
+
+## 常用模块
 
 Node.js作为一个JavaScript的运行环境，提供了基础的功能和API，是一个渐进式框架：一个功能对应一个模块(js文件)，需要用的时候导入即可。
 
 - 非渐进式框架：套餐，一次性导入所有的功能。无论是项目需要的还是不需要的(浪费资源)。
 - 渐进式框架：自助餐，吃什么用什么，不浪费(节省资源)。
 
-#### 内置模块
+**内置模块**
 
 - fs文件系统模块
 - path路径模块
 - http模块
 
-#### 自定义模块
+**自定义模块**
 
 用户创建的每个js文件都是自定义模块
 
-#### 第三方模块
+**第三方模块**
 
 由第三方开发出来的模块，并非官方提供的内置模块，也不是用户创建的自定义模块，使用前需要下载。
 
-#### Epress实现服务端功能
+## Epress实现服务端功能
 
 Express是专门用来创建服务器的。
 
@@ -1860,19 +2242,15 @@ app.listen(80, () => {
 })
 ```
 
+# Ajax
 
+# Git
 
-### Axios
+# HTTP协议
 
-#### 请求拦截
+# 尚品汇
 
-#### CORS
-
-### Git、浏览器开发者工具
-
-
-
-### 尚品汇
+## 项目主要内容
 
 •  项目描述：此项目为在线电商Web App，包括首页、搜索列表、商品详情、用户登录/注册等多个模块
 •  技术栈：Vue全家桶 + ES6 + Webpack + Axios
@@ -2313,7 +2691,7 @@ app.listen(80, () => {
 
 --------------------------------------------------------------
 
-### 项目性能优化
+## 项目性能优化
 
 （1）TypeNav三级联动性能优化
 
@@ -2343,7 +2721,5 @@ home切换到search或者search切换到home，组件在频繁的向服务器发
 
 发一个请求，需要向服务器携带参数：带100个参数 带1个参数【消耗宽带】。对于给服务器携带的参数，如果数值为undefined，向服务器发请求时，参数不会携带给服务器的。
 
-
-
-### 科研成果
+# 科研成果
 

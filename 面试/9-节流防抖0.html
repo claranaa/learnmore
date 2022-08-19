@@ -52,13 +52,13 @@
       }
     }
     var i = 0;
-    /* document.onmousemove = function (event) {
+    document.onmousemove = function (event) {
       console.log(i++);
-    } */
-    const debouncedFn = debounce(function fn(event) {
+    }
+    /* const debouncedFn = debounce(function fn(event) {
       console.log(i++);
     }, 100)
-    document.onmousemove = debouncedFn;
+    document.onclick = debouncedFn; */
 
     function show(a, b, c, ...args) {
       console.log(...args);

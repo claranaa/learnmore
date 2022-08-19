@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    function throttle(fn, delay) {
+      let timer;
+      return function (...args) {
+        if (timer) {
+          return false;
+        }
+        timer = setTimeout(() => {
+          timer = null;
+          fn.call(this, ...args);
+        }, delay)
+      }
+    }
+    function debounce(fn, delay) {
+      let timer;
+      return function (...args) {
+        timer && clearTimeout(timer)
+        timer = setTimeout(() => {
+          fn.call(this, ...args)
+        }, delay)
+      }
+    }
+    var i = 0;
+    var obj = {
+      i: 2,
+    }
+    /* window.onmousemove = function () {
+      console.log(i++);
+    } */
+    // 测试节流
+    // window.onmousemove = throttle(() => { console.log(i++) }, 100)
+    // 测试防抖
+    // window.onmousemove = debounce(() => { console.log(i++) }, 1000)
+    // 测试this
+    // document.onmousemove = throttle(function () { console.log(this.i) }, 100) // undefined
+    // 测试改变this
+    window.onmousemove = throttle(function () { console.log(this.i) }, 100).bind(obj) // 2
+
+  </script>
+</body>
+
+</html>
