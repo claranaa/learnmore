@@ -44,17 +44,17 @@
     } */
     // 方法五：闭包
     /* for (var i = 0; i < lis.length; i++) {
-      (function (i) {
-        lis[i].onclick = function () {
-          console.log(i)
+      (function (j) {
+        lis[j].onclick = function () {
+          console.log(j)
         }
       })(i)
     } */
     // 方法六 闭包
     for (var i = 0; i < lis.length; i++) {
-      lis[i].onclick = (function (i) {
+      lis[i].onclick = (function (j) {
         return function () {
-          console.log(i)
+          console.log(j)
         }
       })(i)
     }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let arr = [1, 6, 2, 9, 5];
+    // 一：改变原数组的操作
+    // (1) shift
+    // let res = arr.shift();
+
+    // (2) unshift
+    // let res = arr.unshift(0);
+
+    // (3) pop
+    // let res = arr.pop();
+
+    // (4) push
+    // let res = arr.push(6);
+
+    // (5) sort
+    // let res = arr.sort();
+
+    // (6) reverse()
+    // let res = arr.reverse();
+
+    // (7) splice(start,length,item)
+    // let res = arr.splice(2, 2, 3);
+
+    // (8) fill(value,start,end)
+    // let res = arr.fill(8, 2, 5);
+
+    // (9) copyWith(target,start,end)
+    let res = arr.copyWithin(1, 2, 5);
+    console.log(res); // [1,2,9,5,5]
+    console.log(arr); // [1,2,9,5,5]
+  </script>
+</body>
+
+</html>

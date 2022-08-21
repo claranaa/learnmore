@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    var arr = [1, 3, 3, 6, 2, 1, 9];
+    // 方法三：indexOf结合filter
+    /* function unique(arr) {
+      if (!Array.isArray(arr)) {
+        return;
+      }
+      return Array.prototype.filter.call(arr, function (item, index) {
+        return arr.indexOf(arr[index]) === index
+      })
+    } */
+    // 方法四 相邻元素去重（使用Array.sort()+一行遍历冒泡）
+    /* function unique(arr) {
+      arr = arr.sort();
+      let res = [];
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] !== arr[i - 1]) {
+          res.push(arr[i]);
+        }
+      }
+      return res;
+    } */
+
+    // 方法五 利用对象属性去重
+    /* function unique(arr) {
+      let obj = {};
+      let res = [];
+      for (let i = 0; i < arr.length; i++) {
+        if (!obj[arr[i]]) {
+          res.push(arr[i])
+          obj[arr[i]] = 1
+        } else {
+          obj[arr[i]]++
+        }
+      }
+      return res
+    } */
+
+    // 方法六 Set与解构赋值去重
+    /* function unique(arr) {
+      return [...new Set(arr)]
+    }
+ */
+
+    function unique(arr) {
+      if (!Array.isArray) {
+        console.log('type error')
+        return;
+      }
+      return Array.from(new Set(arr));
+    }
+    var result = unique(arr);
+    console.log(result);
+  </script>
+</body>
+
+</html>

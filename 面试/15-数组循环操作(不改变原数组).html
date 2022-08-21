@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 1. forEach()
+    /* let a = [1, 2, , 3]; // 最后第二个元素是空的，不会遍历(undefined、null会遍历)
+    let obj = { name: 'OBKoro1' };
+    let result = a.forEach(function (value, index, array) {
+      a[3] = '改变元素';
+      a.push('添加到尾端，不会被遍历')
+      console.log(value, 'forEach传递的第一个参数'); // 分别打印 1 ,2 ,改变元素
+      console.log(this.name); // OBKoro1 打印三次 this绑定在obj对象上
+      // break; // break会报错
+      return value; // return只能结束本次回调 会执行下次回调
+      console.log('不会执行，因为return 会执行下一次循环回调')
+    }, obj);
+    console.log(result); // 即使return了一个值,也还是返回undefined
+    console.log(a); */
+    // 回调函数也接受箭头函数写法
+
+    // 2. every()
+    /* function isBigEnough(element, index, array) {
+      return element >= 10; // 判断数组中的所有元素是否都大于10
+    }
+    let result0 = [12, 5, 8, 130, 44].every(isBigEnough);   // false
+    let result1 = [12, 54, 18, 130, 44].every(isBigEnough); // true
+    // 接受箭头函数写法 
+    let result2 = [12, 5, 8, 130, 44].every(x => x >= 10); // false
+    let result3 = [12, 54, 18, 130, 44].every(x => x >= 10); // true
+    console.log(result0, result1, result2, result3) */
+
+    // 3. some()
+    /* function isBigEnough(element, index, array) {
+      return (element >= 10); //数组中是否有一个元素大于 10
+    }
+    let result0 = [2, 5, 8, 1, 4].some(isBigEnough); // false
+    let result1 = [12, 5, 8, 1, 4].some(isBigEnough); // true
+    console.log(result0, result1) */
+
+    // 4. filter
+    /* let a = [32, 33, 16, 40];
+    let result = a.filter(function (value, index, array) {
+      return value >= 18; // 返回a数组中所有大于18的元素
+    });
+    console.log(result, a);// [32,33,40] [32,33,16,40] */
+
+    // 5. map()
+    /* let a = ['1', '2', '3', '4'];
+    let result = a.map(function (value, index, array) {
+      return value + '新数组的新元素'
+    });
+    console.log(result, a);
+    // ["1新数组的新元素","2新数组的新元素","3新数组的新元素","4新数组的新元素"] ["1","2","3","4"] */
+
+    // 6.reduce()
+    // 数组求和 
+    /* let sum = [0, 1, 2, 3].reduce(function (a, b) {
+      return a + b;
+    }, 0);
+    console.log(sum);
+    // 6
+    // 将二维数组转化为一维 将数组元素展开
+    let flattened = [[0, 1], [2, 3], [4, 5]].reduce(
+      (a, b) => a.concat(b),
+      []
+    );
+    console.log(flattened)
+    // [0, 1, 2, 3, 4, 5] */
+
+    // 7 reduceRight()
+
+    // 8 find()
+    /* let a = [1, 4, -5, 10].find((n) => n < 0); // 返回元素-5
+    let b = [1, 4, -5, 10, NaN].find((n) => Object.is(NaN, n));  // 返回元素NaN
+    console.log(a, b); */
+
+    // 9 findIndex()
+    /* let a = [1, 4, -5, 10].findIndex((n) => n < 0); // 返回索引2
+    let b = [1, 4, -5, 10, NaN].findIndex((n) => Object.is(NaN, n));  // 返回索引4
+    console.log(a, b) */
+
+    // 10 11 12 keys()、values()、entries()
+    /* for (let index of ['a', 'b'].keys()) {
+      console.log(index);
+    }
+    // 0
+    // 1
+
+    for (let elem of ['a', 'b'].values()) {
+      console.log(elem);
+    }
+    // 'a'
+    // 'b'
+
+    for (let [index, elem] of ['a', 'b'].entries()) {
+      console.log(index, elem);
+    }
+    // 0 "a"
+    // 1 "b" */
+
+    let letter = ['a', 'b', 'c'];
+    let entries = letter.entries();
+    // console.log(entries)
+    console.log(entries.next().value); // [0, 'a']
+    console.log(entries.next().value); // [1, 'b']
+    console.log(entries.next().value); // [2, 'c']
+  </script>
+</body>
+
+</html>

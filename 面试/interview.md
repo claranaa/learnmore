@@ -1842,6 +1842,465 @@ JavaScript是单线程的，但浏览器是多线程的，多个线程相互配�
 
 （5）其他线程无法像JavaScript主线程一样操作DOM
 
+## 垃圾回收
+
+**为什么要垃圾回收**
+
+ 如果没有垃圾回收机制，适时清理不被引用的值并释放相应的内存空间，JavaScript 解 释器将会消耗完系统中所有可用内存，造成系统崩溃。
+
+**垃圾回收机制**
+
+ JS 的垃圾回收机制是为了以防内存泄漏，内存泄漏的含义就是当已经不需要某块内存时 这块内存还存在着，垃圾回收机制就是间歇的不定期的寻找到不再使用的变量，并释放掉它 们所指向的内存。  
+
+**垃圾回收的两种方式**
+
+- 标记清除
+
+  （1） 给所有变量增加一个标记，如果是进入执行环境（比如申明变量），则标记为“进 入环境”，如果是结束执行环境（比如执行完相关函数），则标记为“离开环境”； 
+
+  （2） 去掉“进入环境”的变量标记以及被该变量所引用的变量标记（比如闭包）； 
+
+  （3） 还存在标记的变量即是需要被清理的变量。 
+
+- 引用计数
+
+  每个对象计算指向它的指针的数量，当有一个指针指向自己，那么计数值记为1，当删除一个指向自己的指针时，计数值减1，那么计数值为0的需要销毁。
+
+**内存泄露**
+
+指程序申请内存后，无法释放已申请的内存空间，造成内存泄露。
+
+**内存溢出**
+
+指程序申请内存时，没有足够的内存供申请者使用。（内存泄露堆积后会导致内存溢出）
+
+**常见内存泄露的原因**
+
+（1）全局变量引起的内存泄露（由于我们使用未声明的全局变量，意外的创建了一个全局变量，这个全局变量一直无法被回收）
+
+（2）闭包引起的内存泄露
+
+（3）dom清空或删除时，事件未清除导致的内存泄露
+
+（4）循环引用带来的内存泄露
+
+**如何减少垃圾回收开销**
+
+（1）在对象结束使用后 ，令 obj = null。这样利于解除循环引用，使得无用变量及时被回收；
+（2）js 中开辟空间的操作有 new(), [ ], { }, function (){…}。最大限度的实现对象的重用；
+（3）慎用闭包。闭包容易引起内存泄露。本来在函数返回之后，之前的空间都会被回收。但是由于闭包可能保存着函数内部变量的引用，且闭包在外部环境，就会导致函数内部的变量不能够销毁。
+
+**垃圾回收的缺陷**
+
+和其他语言一样，javascript 的 GC 策略也无法避免一个问题：GC 时，停止响应 其他操作，这是为了安全考虑。而 Javascript 的 GC 在 100ms 甚至以上，对一般的应用 还好，但对于 JS 游戏，动画对连贯性要求比较高的应用，就麻烦了。这就是新引擎需 要优化的点：避免 GC 造成的长时间停止响应。
+
+**优化垃圾回收**
+
+（1）分代回收（Generation GC）：与 Java 回收策略思想是一致的。目的是通过区分“临 时”与“持久”对象；多回收“临时对象”区（young generation），少回收“持久对 象”区（tenured generation），减少每次需遍历的对象，从而减少每次 GC 的耗时。
+（2）增量GC：这个方案的思想很简单，就是“每次处理一点，下次再处理一点，如此类推。
+
+## 数组的操作方式
+
+### 数组去重
+
+方法一：双循环去重
+
+```js
+function unique(arr) {
+    if(! Array.isArray(arr)) {
+        console.log('type error!')
+        return ;
+    }
+    let newArr = [arr[0]];
+    for(let i = 1; i < arr.length; i++) {
+        let flag = true;
+        for(let j = 0; j < newArr.length; j++) {
+            if(arr[i] == newArr[j])
+                {
+                    flag = false;
+                    break;
+                }
+        }
+        if(flag) {
+            newArr.push(arr[i])
+        }
+    }
+    return newArr;
+}
+```
+
+方法二：indexOf方法去重1
+
+```js
+function unique(arr) {
+    let res = [];
+    for (let i = 0; i <arr.length; i++) {
+        if(res.indexOf(arr[i]) === -1) {
+            res.push(arr[i])
+        }
+    }
+}
+```
+
+方法三：indexOf方法去重2
+
+```js
+function unique(arr) {
+    if (!Array.isArray(arr)) {
+        console.log('type error!')
+        return
+    }
+    return Array.prototype.filter.call(arr, function(item, index){
+        return arr.indexOf(item) === index;
+    });
+}
+```
+
+方法四：相邻元素去重（使用Array.sort()+一行遍历冒泡）
+
+```js
+function unique(arr) {
+    arr = arr.sort();
+    let res = [];
+    for(var i = 0; i < arr.length; i++) {
+        if(arr[i] !== arr[i-1]) {
+            res.push(arr[i]);
+        }
+    }
+    return res;
+}
+```
+
+方法五：利用对象属性去重
+
+```js
+function unique(arr) {
+    let obj = {};
+    let res = [];
+    for(let i = 0; i < arr.length; i++) {
+        if(!obj[arr[i]]) {
+            res.push(arr[i])
+            obj[arr[i]] = 1
+        } else {
+            obj[arr[i]]++
+        }
+    }
+    return res
+}
+```
+
+方法六：Set与解构赋值去重
+
+```js
+function unique(arr) {
+    return [...new Set(arr)]
+}
+```
+
+方法七：Array.from与Set去重
+
+```js
+function unique(arr) {
+    if (!Array.isArray) {
+        console.log('出错了！')
+        return ;
+    }
+    return Array.from(new Set(arr));
+}
+```
+
+### 数组扁平化
+
+定义：扁平化就是将多维数组变成一维数组，不存在数组的嵌套
+
+方法一：ES6 flat
+
+```js
+function flatten(arr) {
+    return arr.flat(Infinity);
+}
+```
+
+方法二：递归
+
+```js
+function flatten(arr) {
+    let result = [];
+    arr.forEach((item) => {
+        if(Array.isArray(item)) {
+            result = result.concat(flatten(item))
+        } else {
+            result.push(item)
+        }
+    })
+    return result;
+}
+```
+
+方法三：解构运算符
+
+```js
+function flatten(arr) {
+    while(arr.some(function(item) {
+        return Array.isArray(item)
+    })) {
+        arr = [].concat(...arr);
+    }
+}
+```
+
+### 改变原数组的数组操作（9种）
+
+- ES5
+
+  shift()、unshift()、pop()、push()、reverse()、sort()、splice(start,length,item)
+
+- ES6
+
+  copyWith(target,start,end)、fill(value,start,end)
+
+### 不改变原数组的数组操作（8种）
+
+- ES5
+
+  concat()、join()、slice(start,end)、toLocaleString()、toString()、indexOf()、lastIndexOf()
+
+- ES7
+
+  includes()
+
+注：indexOf()不能识别NaN，includes()是为了弥补indexOf的这个缺点
+
+### 数组遍历方法（12种）
+
+js中遍历数组并不会改变原始数组的方法共有12种：
+
+- ES5
+
+  forEach()、every()、some()、filter()、map()、reduce()、reduceRight()
+
+- ES6
+
+  find()、findIndex()、keys()、values()、entries()
+
+**forEach**
+
+定义：按升序为数组中含有效值的每一项执行一次回调函数
+
+语法
+
+```js
+array.forEach(function(currentValue,index,arr),thisValue)
+```
+
+参数
+
+- function()：必须，数组中每个元素需要调用的函数
+
+  回调函数的参数
+
+  1. currentValue：必须，数组当前元素的值
+  2. index：可选，当前元素的索引值
+  3. arr：可选，数组对象本身
+
+- thisValue：可选，当执行回调函数时this绑定对象的值，默认为undefined
+
+注意：（1）无法中途退出循环，只能用return退出本次回调，进行下一次回调
+
+​            （2）它总是返回undefined值，即使你return了一个值
+
+**every**
+
+定义：检查数组所有元素是否都符合函数定义的条件
+
+语法
+
+```js
+array.every(function(currentValue,index,arr),thisValue)
+```
+
+方法返回值的规则
+
+（1）如果数组中检测到有一个元素不满足，则整个表达式返回false，且剩余的元素不会再进行检测
+
+（2）如果所有元素都满足条件，则返回true
+
+**some**
+
+定义：数组中是否有满足判断条件的元素
+
+语法
+
+```js
+array.every(function(currentValue,index,arr),thisValue)
+```
+
+方法返回值的规则
+
+（1）如果有一个元素满足条件，则表达式返回true，剩余的参数不会再执行检测
+
+（2）如果没有满足条件的元素，则返回false
+
+**filter**
+
+定义：返回一个新数组，其包含通过所提供函数实现的测试的所有元素
+
+**map**
+
+定义：创建一个新数组，其结果是该数组中的每个元素都调用所提供函数后返回的结果
+
+**reduce**
+
+定义：对累加器和数组中的每个元素（从左到右）应用一个函数，最终合并为一个值
+
+语法
+
+```js
+array.reduce(function(total,currentValue,index,arr),initialValue)
+```
+
+参数
+
+- function()：必须，数组中每个元素需要调用的函数
+
+  回调函数的参数
+
+  1. total：必须，初始值，或者上一次调用回调返回的值
+  2. currentValue：必须，数组当前元素的值
+  3. index：可选，当前元素的索引值
+  4. arr：可选，数组对象本身
+
+- thisValue：可选，指定第一次回调的第一个参数
+
+注意：（1） 如果 initialValue 在调用 reduce 时被提供，那么第一个 total 将等于 initialValue，此时 currentValue 等于数组中的第一个值 
+
+​            （2）如果initialValue未被提供，那么total等于数组中的第一个值，currentValue等于数组中的第二个值。此时如果数组为空，那么将抛出TypeError
+
+​            （3）如果数组仅有一个元素，并且没有提供initialValue，或提供了initialValue但数组数组为空，那么回调不会被执行，数组的唯一值将被返回
+
+**reduceRight**
+
+reduceRight()方法的功能和reduce()功能是一样的，不同的是reduceRight()从数组的末尾向前将数组中的项做累加。
+
+**find**
+
+定义：用于找出第一个符合条件的数组成员，并返回该成员，如果没有符合条件的成员，则返回undefined
+
+**findIndex**
+
+定义：返回第一个符合条件的数组成员的位置，如果所有成员都不符合条件，则返回-1
+
+**keys()  values()  entries()**
+
+定义：三个方法都返回一个新的Array Iterator对象，对象根据方法不同包含不同的值
+
+语法
+
+```js
+// 无参数
+array.keys()
+array.values()
+array.entries()
+```
+
+**其他**
+
+- Array.from()
+
+  入参为一个类数组或者一个可迭代对象，返回一个数组实例
+
+- 什么是类数组，常见的话有哪些
+
+  有元素属性以及可索引的对象，如函数的arguments、Element NodeList等
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## JS其他面试题
+
+### Q1：原生JS遍历时获取下标的方法
+
+A1：
+
+方法一：给每个按钮自定义data-index属性
+
+```js
+for(var i = 0; i < btns.length; i++){
+     btns[i].setAttribute('data-index',i)
+     btns[i].onclick = function(){
+        console.log(this.dataset['index'])
+     }
+ }
+```
+
+方法二：存下标
+
+```js
+for(var i = 0; i < btns.length; i++){
+    btns[i].index = i;
+    btns[i].onclick = function(){
+        console.log(this.index)
+     }
+}
+```
+
+方法三：forEach
+
+```js
+btns.forEach(function(item, index) {
+    item.onclick = function() {
+    console.log(index)
+    }
+})
+```
+
+方法四：let
+
+```js
+  for(let i = 0; i< btns.length; i++){ 
+    btns[i].onclick = function(){
+        console.log(i)
+    }
+}
+```
+
+方法五：闭包
+
+```js
+for(var i = 0; i < btns.length; i++) {
+    (function(j) {
+        btns[j].onclick = function() {
+            console.log(j);
+        }
+    })(i)
+}
+```
+
+方法六：闭包
+
+```js
+for(var i = 0; i < btns.length; i++) {
+    btns[i].onclick = (function(j) {
+        return function() {
+            console.log(j)
+        }
+    })(i)
+}
+```
+
+
+
 # ES6
 
 ES6是新一代JS语言标准，对JS语言核心内容做了升级优化，规范了JS使用标准，新增了JS原生方法，使得JS使用更加规范，更加优雅，更适合大型应用的开发。
@@ -1987,7 +2446,7 @@ Map是ES6引入的一种类似于Object的新的数据结构，Map可以理解�
 
 **原生具备Iterator接口的数据结构有**
 
-Array，Map，Set，String，TypesArray，函数的arguments对象，NodeList对象
+Array，Map，Set，String，TypedArray，函数的arguments对象，NodeList对象
 
 因此for of不能遍历对象，因为对象没有iterable（遍历器）属性。
 
@@ -2190,6 +2649,126 @@ DOM：                                                                          
 
 # Vue
 
+定义：动态构建用户界面的渐进式JavaScript框架
+
+特点：代码简洁，体积小，运行效率高，适合移动/PC端开发
+
+## MVVM
+
+**定义**
+
+MVVM是一种简化用户界面的事件驱动编程方式，是Model-View-ViewModel的简写，即模型-视图-视图模型。模型指的是后端传递的数据。视图指的是所看到的页面。视图模型是MVVM模式的核心，它是连接view和model的桥梁。我们称之为数据的双向绑定，MVVM框架自动更新DOM状态，开发者只需要关心model的变化。
+
+M：模型(Model)：data中的数据
+
+V：视图(View)：模板代码
+
+VM：视图模型(ViewModel)：Vue实例对象
+
+<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1661066798947.png" alt="1661066798947" style="zoom:50%;" />
+
+**MVC的定义**
+
+MVC是Model-View-Controller的简写，即模型-视图-控制器。M和V分别指模型和视图，C指的是页面业务逻辑。使用MVC的目的就是将M和V的代码分离。MVC是单向通信。
+
+**与MVC的区别**
+
+MVC和MVVM都是一种设计思想，MVC中Controller演变成MVVM中的viewModel，MVVM主要解决了MVC中大量的DOM操作使页面渲染性能降低，加载速度变慢，影响用户体验。Vue数据驱动，通过数据来显示视图层而不是节点操作。
+
+**场景**
+
+数据操作比较多的场景，需要大量操作DOM元素时，采用MVVM的开发方式，会更加便捷，让开发者更多的精力放在数据的变化上，解放繁琐的操作DOM元素。
+
+**JS在浏览器中操作HTML**
+
+- 第一阶段：直接用JS操作DOM节点，使用浏览器提供的原生API
+
+  ```js
+  var dom = document.getElementById('name');
+  dom.innerHTML = 'Homer';
+  dom.style.color = 'red';
+  ```
+
+- 第二阶段：jQuery
+
+  ```js
+  $('#name').text('Homer').css('color','red');
+  ```
+
+- 第三阶段：MVC模式，需要服务器端配合，JS可以在前端修改服务器渲染后的数据
+
+- 第四阶段：MVVM
+
+  MVVM最早由微软提出来，它借鉴了桌面应用程序的MVC思想，在前端页 面中，把Model用纯JavaScript对象表示，View负责显示，两者做到了最大限度的分离。把 Model和View关联起来的就是ViewModel。ViewModel负责把Model的数据同步到View显示出 来，还负责把View的修改同步回Model。MVVM的核心是 viewModle, 负责转换 Model中的数 据对象来让数据变得更容易管理和使用，该层向上与视图层进行双向数据绑定，向下与 Model 层通过接口请求进行数据交互，起呈上启下作用
+
+**Vue中的数据代理**
+
+定义：通过vm对象来代理data对象中属性的操作
+
+好处：更加方便的操作data中的数据
+
+原理：
+
+（1）通过Object.defineProperty()把data对象中所有属性添加到vm上
+
+（2）为每一个添加到vm上的属性，都指定一个getter/setter
+
+（3）在getter/setter内部去操作(读/写)data中对应的属性
+
+结论：
+
+（1）data中所有的属性，最后都出现在了vm身上
+
+（2）vm身上所有的属性及Vue原型上所有属性，在Vue模板中都可以直接使用
+
+**数据绑定**
+
+- 单向绑定：v-bind，数据只能从data流向页面
+
+- 双向绑定：v-model：数据不仅能从data流向页面，还可以从页面流向data
+
+  注意：（1）双向绑定一般都应用在表单类元素上（如input、select、单选多选，表单域等）
+
+  （2）v-model:value可以简写为v-model
+
+
+
+## Computed/Watch
+
+区别：
+
+（1）computed能完成的功能，watch都可以完成
+
+（2）watch能完成的功能，computed不一定能完成，例如：watch可以进行异步操作
+
+## 条件渲染v-if/v-show
+
+- v-if
+
+  写法：
+
+  ​		（1）v-if = “表达式”
+
+  ​		（2）v-else-if = “表达式”
+
+  ​		（3）v-else = “表达式”
+
+  场景：切换频率较低的场景，与template标签配合使用，控制多个标签的显示与隐藏
+
+  特点：不展示的DOM元素直接被移除
+
+  注意：v-if可以和v-else-if、v-else一起使用，但要求结构不能被“打断”
+
+- v-show
+
+  写法：v-show=“表达式”
+
+  场景：切换频率较高的场景
+
+  特点：不展示的DOM元素未被移除，仅仅是使用样式隐藏
+
+注意：使用v-if时，元素可能无法获取到，而使用v-show一定可以获取到
+
 ## 组件间的通信
 
 props:用于父子组件通信
@@ -2201,6 +2780,34 @@ Vuex:万能
 $ref:父子通信
 
 ## 路由
+
+
+
+## 其他
+
+**注意事项**
+
+（1）methods中配置的函数，不要用箭头函数！否则this就不是vm了
+
+（2）methods中配置的函数，都是被Vue所管理的函数，this的指向是vm或组件实例对象
+
+绑定样式
+
+- class样式
+
+  写法:class="xxx" xxx可以是字符串、对象、数组。
+
+  ​         字符串写法适用于：类名不确定，要动态获取。
+
+  ​          数组写法适用于：要绑定多个样式，个数不确定，名字也不确定。
+
+  ​          对象写法适用于：要绑定多个样式，个数确定，名字也确定，但不确定用不用。
+
+- style样式
+
+  :style="{fontSize: xxx}"其中xxx是动态值。
+
+  ​        :style="[a,b]"其中a、b是样式对象。
 
 
 
