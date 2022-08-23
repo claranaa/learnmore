@@ -1,6 +1,6 @@
 # 自我介绍
 
-面试官您好！我是王晓娜，就读于广东工业大学。
+面试官您好！我是王晓娜，目前在广东工业大学攻读电子信息硕士学位。
 
 # HTML5
 
@@ -35,9 +35,9 @@
 
 声明< !DOCTYPE html >，浏览器会默认开启标准模式；否则，部分浏览器会使用混杂模式渲染页面。
 
-**Q：HTML5如果不写<! DOCTYPE hyml > ，页面还会正常工作么**
+**Q：HTML5如果不写<! DOCTYPE html > ，页面还会正常工作么**
 
-**A**：页面可以正常工作，页面会根据浏览器自身的解析标准来解析，可能会导致页面在不同的浏览器呈现不同的效果，浏览器认为这是正常的。
+**A**：页面可以正常工作，页面会根据浏览器自身的解析标准来解析，可能会导致页面在不同的浏览器呈现不同的效果，但是浏览器认为这是正常的。
 
 ### 新特性
 
@@ -191,7 +191,7 @@ HTML5 引入了应用程序缓存（Application Cache），这意味着可对 we
 
 Web worker 是运行在后台的 JavaScript，独立于其他脚本，不会影响页面的性能。您可以继续做任何愿意做的事情：点击、选取内容等等，而此时 web worker 运行在后台。
 
-由于 web worker 位于外部文件中，它们无法访问下例 JavaScript 对象：
+由于 web worker 位于外部文件中，它们无法访问下列 JavaScript 对象：
 
 - window 对象
 - document 对象
@@ -255,7 +255,7 @@ H5被大量应用于移动应用和游戏开发。
 
 ### 回流和重绘
 
-在页面加载时，浏览器会把HTML代码解析成一个DOM树，包含了所有的HTML标签，以及display：none的元素，还有js动态添加的元素，render tree类似于DOM tree，但区别很大，因为render tree能够识别样式，render tree的每个节点都有自己的样式，不会呈现出来的元素比包含在render tree中（如display：none的元素）。简单点理解DOM tree和CSS结合在一起就形成了render tree。
+在页面加载时，浏览器会把HTML代码解析成一个DOM树，包含了所有的HTML标签，以及display：none的元素，还有js动态添加的元素，render tree类似于DOM tree，但区别很大，因为render tree能够识别样式，render tree的每个节点都有自己的样式，不会呈现出来的元素不包含在render tree中（如display：none的元素）。简单点理解DOM tree和CSS结合在一起就形成了render tree。
 
 **回流**
 
@@ -271,7 +271,7 @@ H5被大量应用于移动应用和游戏开发。
 
 ### 说说对< meta >标签的理解
 
-meta标签位于HTML文档头部的head和title标签之间。使用meta，可以定义页面编码语言、搜索引擎优化、自动刷新并指向新的页面、控制页面缓冲、响应式视窗等。
+meta标签位于HTML文档头部的head标签之间。使用meta，可以定义页面编码语言、搜索引擎优化、自动刷新并指向新的页面、控制页面缓冲、响应式视窗等。
 
 HTML5之前，meta标签只有两个属性，分别是name属性和http-equiv属性
 
@@ -406,7 +406,7 @@ position: fixed;
 
 （5）使用**flexbox**
 
-将父容器设置display：flex；**justify-content**：center（flex-direction：row；）
+将父容器设置display：flex；**justify-content**：center（flex-direction：row）
 
 ### 水平居中对齐文本
 
@@ -1137,7 +1137,7 @@ img {
 
 优点：仅用CSS实现，代码少，浏览器支持好
 
-缺点：用overflow：hidden触发BFC情况下，可能会使内部本应正常显示的元素被裁剪
+缺点：用overflow：hidden触发父元素BFC情况下，可能会使内部本应正常显示的元素被裁剪
 
 ```css
 .box-container {
@@ -2727,11 +2727,79 @@ MVC和MVVM都是一种设计思想，MVC中Controller演变成MVVM中的viewMode
 
 - 双向绑定：v-model：数据不仅能从data流向页面，还可以从页面流向data
 
-  注意：（1）双向绑定一般都应用在表单类元素上（如input、select、单选多选，表单域等）
+  注意：
+
+  （1）双向绑定一般都应用在表单类元素上（如input、select、单选多选，表单域等）
 
   （2）v-model:value可以简写为v-model
 
+  （3）v-model的三个修饰符：（a）lazy：失去焦点再收集数据（b）number：输入字符串转为有效的数字                                                       （c）trim：输入首尾空格过滤
 
+**Vue监视数据的原理**
+
+1. vue会监视data中所有层次的数据。
+
+   2. 如何监测对象中的数据？
+
+​       通过setter实现监视，且要在new Vue时就传入要监测的数据。
+
+​           (1).对象中后追加的属性，Vue默认不做响应式处理
+
+​           (2).如需给后添加的属性做响应式，请使用如下API：
+
+​            Vue.set(target，propertyName/index，value) 或 
+
+​            vm.$set(target，propertyName/index，value)
+
+   3. 如何监测数组中的数据？
+
+​           通过包裹数组更新元素的方法实现，本质就是做了两件事：
+
+​           (1).调用原生对应的方法对数组进行更新。
+
+​           (2).重新解析模板，进而更新页面。
+
+   4.在Vue修改数组中的某个元素一定要用如下方法：
+
+​       1.使用这些API:push()、pop()、shift()、unshift()、splice()、sort()、reverse()
+
+​       2.Vue.set() 或 vm.$set()
+
+​    特别注意：Vue.set() 和 vm.$set() 不能给vm 或 vm的根数据对象 添加属性！！！
+
+## Vue中的key有什么作用(key的内部原理)
+
+- 虚拟DOM中key的作用
+
+  key是虚拟DOM对象的标识，当数据发生变化时，Vue会根据【新数据】生成【新的虚拟DOM】, 随后Vue进行【新虚拟DOM】与【旧虚拟DOM】的差异比较，比较规则如下：
+
+- 对比规则
+
+  (1).旧虚拟DOM中找到了与新虚拟DOM相同的key：
+
+  ​            ①.若虚拟DOM中内容没变, 直接使用之前的真实DOM！
+
+  ​            ②.若虚拟DOM中内容变了, 则生成新的真实DOM，随后替换掉页面中之前的真实DOM。
+
+   (2).旧虚拟DOM中未找到与新虚拟DOM相同的key
+
+  ​       创建新的真实DOM，随后渲染到到页面。
+
+- 用index作为key可能会引发的问题
+
+  1. 若对数据进行：逆序添加、逆序删除等破坏顺序操作:
+
+  ​       会产生没有必要的真实DOM更新 ==> 界面效果没问题, 但效率低。
+
+  2. 如果结构中还包含输入类的DOM：
+
+  ​       会产生错误DOM更新 ==> 界面有问题。
+
+- 开发中如何选择key(key不写的话默认为index)
+
+  1.最好使用每条数据的唯一标识作为key, 比如id、手机号、身份证号、学号等唯一值。
+
+  2.如果不存在对数据的逆序添加、逆序删除等破坏顺序操作，仅用于渲染列表用于展示，使用index作为key是没有问题的。
 
 ## Computed/Watch
 
@@ -2791,7 +2859,7 @@ $ref:父子通信
 
 （2）methods中配置的函数，都是被Vue所管理的函数，this的指向是vm或组件实例对象
 
-绑定样式
+**绑定样式**
 
 - class样式
 
@@ -2809,7 +2877,13 @@ $ref:父子通信
 
   ​        :style="[a,b]"其中a、b是样式对象。
 
+**v-for**
 
+​		1.用于展示列表数据
+
+​        2.语法：v-for="(item, index) in xxx" :key="yyy"
+
+​        3.可遍历：数组、对象、字符串（用的很少）、指定次数（用的很少，注：次数从1开始）
 
 # Node.js
 
