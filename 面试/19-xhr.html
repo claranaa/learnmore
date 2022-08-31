@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 使用xhr发起get请求
+    // 1. 创建一个xhr对象
+    // 2. 调用open()方法，创建一个请求
+    // 3. 调用send()方法，发起请求
+    // 4. 监听xhr.onreadystatechange事件，如果请求成功就可拿到服务器响应的数据
+    var xhr = new XMLHttpRequest()
+    xhr.open('GET', 'http://www.baidu.com');
+    xhr.send();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.state === 200) {
+        console.log(xhr.responseText)
+      }
+    }
+
+    // 使用xhr发起post请求
+    var xhr1 = new XMLHttpRequest();
+    xhr1.open('POST', '');
+    xhr1.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    xhr1.send('hope=2023秋招顺利拿下offer')
+    xhr1.onreadystatechange = function () {
+      if (xhr1.readyState === 4 && xhr1.status === 200) {
+        console.log(xhr1.responseText)
+      }
+    }
+  </script>
+</body>
+
+</html>

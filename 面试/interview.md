@@ -2,6 +2,8 @@
 
 面试官您好！我是王晓娜，目前在广东工业大学攻读电子信息硕士学位。
 
+为什么自学前端：因为前端入门相对简单，也能及时带来成就感，总是和用户交互界面打交道，会比较活泼一点，对这方面比较感兴趣。
+
 # HTML5
 
 ## 什么是HTML5
@@ -143,7 +145,7 @@ localStorage和sessionStorage所使用的方法是一样的，
 
 清空缓存数据sessionStorage.clear()
 
-**区别是**
+**localStorage和sessionStorage区别**
 
 （1）
 
@@ -2925,6 +2927,112 @@ app.listen(80, () => {
 
 # Ajax
 
+**原生Ajax使用XMLHttpRequest实现**
+
+- 使用xhr发起GET请求
+
+  步骤：
+
+  （1）创建xhr对象
+
+  （2）调用xhr.open()函数   来创建一个请求
+
+  （3）调用xhr.send()函数    来发起这个请求
+
+  （4）监听xhr.onreadystatechange事件    如果请求成功就可拿到服务器响应的数据
+
+  ```js
+  // 1. 创建 XHR 对象
+  var xhr = new XMLHttpRequest();
+  // 2. 调用open函数，指定请求方式与URL地址
+  xhr.open('GET','http://liulongbin.top:3006/api/getbooks');
+  // 3. 调用send函数，发起Ajax请求
+  xhr.send();
+  // 4. 监听onreadystatechange事件
+  xhr.onreadystatechange = function() {
+      // 4.1 监听xhr对象的请求状态readyState；与服务器响应的状态status
+      if (xhr.readyState === 4 && xhr.status === 200) {
+          // 4.2 打印服务器响应回来的数据
+          console.log(xhr.responseText);
+      }
+  }
+  ```
+
+- 使用xhr发起POST请求
+
+  步骤：
+
+  （1）创建xhr对象
+
+  （2）调用xhr.open()函数
+
+  （3）**设置Content-Type属性**(固定写法)
+
+  （4）调用xhr.send()函数，**同时指定要发送的数据**
+
+  （5）监听xhr.onreadystatechange事件
+
+  ```js
+  // 1. 创建xhr对象
+  var xhr = new XMLHttpRequest()
+  // 2. 调用open()
+  xhr.open('POST','http://www.liulongbin.top:3006/api/addbook')
+  // 3. 设置 Content-type属性(固定写法)
+  xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
+  // 4. 调用send()，同时将数据以查询字符串的形式，提交给服务器
+  xhr.send('bookname=水浒传$author=施耐庵$publisher=天津出版社')
+  // 5. 监听 onreadystatechange 事件
+  xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log(xhr.responseText)
+      }
+  }
+  ```
+
+**二次封装Ajax**
+
+```js
+// 如何二次封装Ajax
+// 在函数中获取配置对象的属性，设置method的默认值，对参数data进行整理，创建xhr实例化对象，并监听onreadystatechange事件，再根据请求方式决定如何携带参数
+function sendAjax(options) {
+      // 获取到配置对象的属性
+      let { url, method, data, success, error } = options
+      // 设置method默认值
+      method = method ? method : 'get'
+      // 实例化xhr
+      let xhr = new XMLHttpRequest()
+      // 绑定监听
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) return
+        if (xhr.readyState >= 200 && xhr.readyState <= 299) {
+          if (success) {
+            success(xhr.response)
+          } else {
+            if (error) error('请求出错')
+          }
+        }
+        // 整理参数
+        let str = ''
+        for (let key in data) {
+          str += `${key}=${data[key]}`
+        }
+        // 根据请求方式决定如何携带参数
+        if (method.toUpperCase() === 'GET') {
+          xhr.open(method, url + '?' + str)
+          xhr.send()
+        } else {
+          xhr.open(method, url)
+          xhr.setRequestHeader('ContentType', 'application/x-www-form-urlencoded')
+          // post要将参数的urlencoded传入send中
+          xhr.send(str)
+        }
+        return xhr
+      }
+    }
+```
+
+
+
 # Git
 
 # HTTP协议
@@ -2967,13 +3075,13 @@ app.listen(80, () => {
 
    （1）事件委派是把全部子节点的事件委派给父节点(不仅是a标签，还有h3，dt，dl，em)。但是只有点击a标签的时候才会进行路由的跳转，**此时不能确定点击的一定是a标签**。
 
-   （2）即使能确定点击的是a标签，如何区分点击的是一级，二级还是三级的a标签又是一个问题。
+   （2）即使能确定点击的是a标签，在获取参数（1、2、3级分类的产品名字，ID）时如何区分点击的是一级，二级还是三级的a标签又是一个问题。
 
    **解决【自定义属性】**
 
    （1）给子节点当中的a标签，添加**自定义属性data-categoryName**，其余的子节点是没有的。判断标签身上是否有categoryname，如果存在则一定是a标签。
 
-   （2）分别给一级、二级、三级a标签添加category1Id、category2Id、category3Id自定义属性可以区分出不能级的a标签。
+   （2）分别给一级、二级、三级a标签添加category1Id、category2Id、category3Id自定义属性可以区分出不同级的a标签。
 
    ```js
    // 进行路由跳转【home→search】的方法
@@ -3040,9 +3148,9 @@ app.listen(80, () => {
 
    **总结：【闭包+延时】**
 
-   防抖：用户操作很频繁，但是只是执行一次
+   防抖：用户操作很频繁，但是只是执行一次。场景：输入框搜索事件，等用户输入完毕之后才会响应
 
-   节流：用户操作很频繁，但是把频繁的操作变为少量操作【可以给浏览器充裕的时间去解析代码】
+   节流：用户操作很频繁，但是把频繁的操作变为少量操作【可以给浏览器充裕的时间去解析代码】，场景：计数器1秒之内只能加1；轮播图在规定时间内只能切换一张
 
    ```js
    changeIndex: throttle(function(index) {
@@ -3089,6 +3197,8 @@ app.listen(80, () => {
       **第七步**:在API文件夹中创建mockRequest【axios实例：baseURL:'/mock'】
    专门获取模拟数据用的axios实例。
 
+   
+
 4. 使用Swiper + watch + $nextTick实现轮播图效果
 
    **QA**
@@ -3101,16 +3211,14 @@ app.listen(80, () => {
 
    答：常用的场景为轮播图----【carousel：轮播图】
 
-   
-
-      **Swiper使用步骤：**
-      第一步：引入依赖包【swiper.js|swiper.css】
-      第二步:   静态页面中结构必须完整【container、wrap、slider】，类名不能瞎写
+    **Swiper使用步骤：**
+   第一步：引入依赖包【swiper.js|swiper.css】
+   第二步:   静态页面中结构必须完整【container、wrap、slider】，类名不能瞎写
    第三步:   初始化swiper实例【轮播图添加动态效果】
 
    **问题**
 
-   在**mounted**【组件实例挂载完毕】中初始化swiper实例，轮播图没有实现动态效果。（初始化swiper实例之前，页面中的结构务必要有）
+   在**mounted**【组件实例挂载完毕】中初始化swiper实例，轮播图没有实现动态效果。（**初始化swiper实例之前，页面中的结构务必要有**）
 
    **原因**
 
@@ -3173,6 +3281,8 @@ app.listen(80, () => {
 
 5. 封装分页器全局组件
 
+   第三方插件:elementUI实现超级简单
+
    对于分页器而言，自定义前提需要知道四个前提条件：
 
    （1）pageNo：当前在第几页
@@ -3185,7 +3295,7 @@ app.listen(80, () => {
 
    分页器动态展示，分为上中下三个部分
 
-      ```vue
+   ```vue
       <template>
         <div class="pagination">
           <!-- 测试用的数据 -->
@@ -3273,7 +3383,7 @@ app.listen(80, () => {
           }
         }
       </script>
-      ```
+   ```
 
    
 
@@ -3366,7 +3476,70 @@ app.listen(80, () => {
 
 10. Element-UI按需引入实现支付页面部分业务(遮罩层)
 
-    
+
+
+**开发中遇到的困难**：
+
+在搜索页面中，页面没有随着用户选择条件的变化而变化。
+
+在搜索页面中，用户的搜索条件可以发生多次变化，但是如果只在mounted中发请求获取搜索模块的数据，那么请求只会发出一次，所以用户的搜索条件发生变化时并没有再次发起请求。如果要根据用户的搜索条件展示不同的数据，则可以监听路由的信息是否发生变化，如果路由信息变化了则再次发起请求获取数据。
+
+在发请求之前beforeMount中，home→search跳转页面时携带的参数也需要整理好一并传递给服务器。
+
+Object.assign(this.searchParams, this.$route.query, this.$route.params)
+
+```js
+watch: {
+      // 监听路由的信息是否发生变化，如果发生变化，再次发起请求
+      $route(newValue,oldValue) {
+        // 再次发请求之前整理需要带给服务器的参数
+        Object.assign(this.searchParams,this.$route.query,this.$route.params)
+        // 再次发起Ajax请求
+        this.getData()
+        // 每一次请求完毕，应该把相应的一级、二级、三级分类的id置空，让它接收下一次请求相应的1,2,3id
+        // 分类名字与关键字不用清空，因为每一次路由发生变化的时候，都会给他赋予新的值
+        this.searchParams.category1Id = undefined
+        this.searchParams.category2Id = undefined
+        this.searchParams.category3Id = undefined
+        
+      }
+    }
+```
+
+根据前台传递参数决定的
+根据不同条件，展示不同的数据。----->取决于后台返回的数据
+
+1:发请求，获取搜索模块的数据
+2:根据用户搜索的条件携带参数给服务器，展示用户搜索的内容
+
+其中，面包屑在删除时，也会重新发起请求，只不过是自己跳转到自己
+
+1）动态开发面包屑中的分类名，编程式导航路由【自己跳自己】
+
+2）动态开发面包屑中的关键字
+
+2.1 当面包屑中的关键字清除以后，需要让兄弟组件Header组件中的关键字清除
+
+```js
+// 删除分类的名字
+      removeCategoryName() {
+        // 把带给服务器的参数置空了，还需要向服务器发请求
+        // 带给服务器的参数说明（都是可有可无的），如果属性值为空的字符串还是会把相应的字段带给服务器
+        // 但是把相应的字段变为undefined，当前这个字段不会带给服务器
+        this.searchParams.categoryName = undefined
+        this.searchParams.category1Id = undefined
+        this.searchParams.category2Id = undefined
+        this.searchParams.category3Id = undefined
+        // 删掉分类面包屑，需清空参数，重新请求默认数据
+        this.getData()
+        // 地址栏也需要修改：进行路由跳转(现在的路由跳转只是跳转到自己这里)
+        // 如果地址栏中带有params参数，则params参数不应该删掉
+        // 严谨：本意是删除query，如果路径当中出现params不应该删除，路由跳转的时候应该带着
+        if(this.$route.params) {
+          this.$router.push({name:"search",params:this.$route.params})
+        }
+      },
+```
 
 
 
@@ -3390,17 +3563,29 @@ home切换到search或者search切换到home，组件在频繁的向服务器发
 
 答：在App根组件当中发请求【根组件mounted】执行一次
 
-（main.js也是执行一次，但是不可以放在它里面，因为它不是一个组件(以.vue结尾)，而是一个js文件，this是undefined）
+（main.js也是执行一次，但是不可以放在它里面，因为它不是一个组件(以.vue结尾)，而是一个js文件，this是undefined，组件身上才有this.$store）
 
 （2）v-if | v-show选择
 
 （3）按需加载
 
+​			对于loadsh插件，它里面封装的函数功能很多，import _ from lodash 相当于把全部功能引入进来，但是我们只是需要节流。因此只需要按需引入节流函数import throttle from ‘lodash/throttle’
+
 （4）防抖与节流：请求次数优化
 
 （5）search搜索页面请求的性能优化
 
-发一个请求，需要向服务器携带参数：带100个参数 带1个参数【消耗宽带】。对于给服务器携带的参数，如果数值为undefined，向服务器发请求时，参数不会携带给服务器的。
+发一个请求，需要向服务器携带参数：带100个参数 带1个参数【消耗宽带】。
+
+把带给服务器的参数置空了，还需要向服务器发请求。
+
+带给服务器参数说明是可有可无的，如果属性值为空的字符串还是会把相应的字段带给服务器。
+
+此时把相应的字段变为undefined，当前这个字段不会带给服务器。
+
+对于给服务器携带的参数，如果数值为undefined，向服务器发请求时，参数不会携带给服务器的。
+
+
 
 # 科研成果
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    function sendAjax(options) {
+      // 获取到配置对象的属性
+      let { url, method, data, success, error } = options
+      // 设置method默认值
+      method = method ? method : 'get'
+      // 实例化xhr
+      let xhr = new XMLHttpRequest()
+      // 绑定监听
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) return
+        if (xhr.readyState >= 200 && xhr.readyState <= 299) {
+          if (success) {
+            success(xhr.response)
+          } else {
+            if (error) error('请求出错')
+          }
+        }
+        // 整理参数
+        let str = ''
+        for (let key in data) {
+          str += `${key}=${data[key]}`
+        }
+        // 根据请求方式决定如何携带参数
+        if (method.toUpperCase() === 'GET') {
+          xhr.open(method, url + '?' + str)
+          xhr.send()
+        } else {
+          xhr.open(method, url)
+          xhr.setRequestHeader('ContentType', 'application/x-www-form-urlencoded')
+          // post要将参数的urlencoded传入send中
+          xhr.send(str)
+        }
+        return xhr
+      }
+
+    }
+  </script>
+</body>
+
+</html>
