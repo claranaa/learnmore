@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 如何判断一个数据是否为Null
+    // 方法一：===
+    // console.log(n === null);
+    // 方法二：Object.prototype.toString.call()
+    // console.log(Object.prototype.toString.call(n)); // // [object Null]
+    // 方法三：typeof obj === 'object' && !obj
+
+    // 封装一个函数，使方法二直接输出类型'Null'
+    let n = null;
+    function typeOfNull(a) {
+      let type = Object.prototype.toString.call(a);
+      let result = type.slice(8, 12);
+      return result;
+    }
+    let type = typeOfNull(n)
+    console.log(type)
+    // 一行代码实现上述函数功能: 直接输出类型Null
+    let replaced = Object.prototype.toString.call(n).replace(/\[object (\w+)\]/, '$1');
+    console.log(replaced);
+  </script>
+</body>
+
+</html>

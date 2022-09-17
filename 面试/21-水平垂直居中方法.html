@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border: 1px solid red;
+    }
+
+    .childrenbox1 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left: 50%;
+      top: 50%;
+      /* 定宽高第一种 */
+      /* margin-left: -50px;
+      margin-top: -50px; */
+      /* 定宽高第二种 */
+      transform: translate(-50px, -50px);
+      background-color: yellow;
+    }
+
+    /* 定宽高第三种 */
+    .childrenbox2 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      background-color: yellow;
+    }
+
+    /* 定宽高第四种（不定宽高第一种） */
+    .box1 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 200px;
+      height: 200px;
+      border: 1px solid green;
+    }
+
+    .box1>.childrenbox3 {
+      /* width: 100px;
+      height: 100px; */
+      background-color: blue;
+    }
+
+    /* 定宽高第五种（不定宽高第二种） */
+    .box2 {
+      display: grid;
+      width: 200px;
+      height: 200px;
+      border: 1px solid purple;
+    }
+
+    .box2>.childrenbox4 {
+      /* width: 100px;
+      height: 100px; */
+      margin: auto;
+      background-color: pink;
+    }
+
+    /* 定宽高第六种（不定宽高第三种） */
+    .box3 {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+      width: 200px;
+      height: 200px;
+      border: 1px solid purple;
+    }
+
+    .box3>.childrenbox5 {
+      /* display: inline-block; */
+      /* width: 100px;
+      height: 100px; */
+      margin: auto;
+      background-color: pink;
+    }
+
+    .box4 {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border: 1px solid red;
+    }
+
+    .box4 .childrenbox6 {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      /* 不定宽高第二种 */
+      transform: translate(-50%, -50%);
+      background-color: yellow;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <!-- <div class="childrenbox1"></div> -->
+    <div class="childrenbox2"></div>
+  </div>
+  <div class="box1">
+    <div class="childrenbox3">111</div>
+  </div>
+  <div class="box2">
+    <div class="childrenbox4">222</div>
+  </div>
+  <div class="box3">
+    <div class="childrenbox5">333</div>
+  </div>
+  <div class="box4">
+    <div class="childrenbox6">444</div>
+  </div>
+</body>
+
+</html>

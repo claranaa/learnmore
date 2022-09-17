@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 常见的伪数组
+    // 1. 函数的参数列表arguments
+    // 2. DOM对象列表（HTMLCollection）
+    let fakeArray = {
+      "0": "first",
+      "1": "second",
+      length: 2
+    }
+
+    // 遍历伪数组的方法
+    // 方法一： for循环
+    /* for (let j = 0; j < fakeArray.length; j++) {
+      console.log(fakeArray[j])
+    } */
+
+
+    // 将伪数组转换为数组的方法
+    // 方法一：Array.from()
+    /* let real1 = Array.from(fakeArray)
+    console.log(real1)
+    // 方法二：Array.prototype.slice.call()
+    let real2 = Array.prototype.slice.call(fakeArray)
+    console.log(real2)
+    // 方法三：[].slice.call()
+    let real3 = [].slice.call(fakeArray)
+    console.log(real3) */
+    // 方法四：遍历伪数组
+    const arr = []
+    for (let k = 0; k < fakeArray.length; k++) {
+      arr.push(fakeArray[k])
+    }
+    console.log(arr)
+  </script>
+</body>
+
+</html>

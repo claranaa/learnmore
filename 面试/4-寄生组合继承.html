@@ -23,7 +23,7 @@
     Father.call(this, name)
   }
   Son.prototype = Object.create(Father.prototype)
-  //console.log(Son.prototype.constructor)
+  // console.log(Son.prototype.constructor)
   Son.prototype.constructor = Son;
   const son = new Son('yaya', 6);
   console.log(son.age);
