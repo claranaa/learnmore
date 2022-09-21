@@ -480,6 +480,8 @@ box-sizing定义元素宽度和高度的计算方式，它们是否应包含内�
 
 ```css
 .trangle {
+    width: 0;
+    height: 0;
     border: 10px solid transparent;
     border-left: 10px solid blue;
 }
@@ -2668,6 +2670,8 @@ Promise.race()并发处理多个异步任务，只要有一个任务完成就能
 
 ## 模块化
 
+
+
 ## ES6其他面试题
 
 **Q1：日常前端代码开发中，有哪些值得用ES6去改进的编程优化或者规范？**
@@ -3180,6 +3184,18 @@ Vue数据双向绑定原理是通过数据劫持+发布者-订阅者模式的方
   （2）v-model:value可以简写为v-model
 
   （3）v-model的三个修饰符：（a）lazy：失去焦点再收集数据（b）number：输入字符串转为有效的数字                                                       （c）trim：输入首尾空格过滤
+  
+- v-model的底层实现原理分析
+
+  ```html
+  <input v-bind:value="msg" v-on:input="msg=$event.target.value">
+  ```
+
+  （1）v-bind绑定一个value属性
+
+  （2）v-on给当前元素绑定input事件，从而更新数据
+
+  
 
 **Vue监视数据的原理**
 
@@ -3220,7 +3236,7 @@ data两种不同的类型有什么区别：
 - 当我们组件中的data写成一个函数时，数据是以函数返回值形式定义的，这样每复用一次data，都会返回一份新的data，拥有自己的作用域，不会产生数据污染。
 - 当我们组件中的data写成一个对象时，对象是引用数据类型，它就会共用一个内存地址，在多次使用该组件时，改变其中一个组件的值会影响全部使用该组件的值。
 
-理解data为什么必须是一个函数：
+**理解data为什么必须是一个函数**
 
 在vue中一个组件可能会被其他的组件引用，为了防止多个组件实例对象之间共用一个data，产生数据污染。将data定义成一个函数，每个组件实例都有自己的作用域，每个实例对象相互独立，不会相互影响。
 
@@ -3313,11 +3329,32 @@ Vue.js通过编译将模板转换成渲染函数，执行渲染函数就可以�
 
 ## Computed/Watch
 
+计算属性computed
+
+- 支持缓存，只有依赖数据发生变化，才会重新计算
+- 不支持异步，当computed内有异步操作时无效，无法监听数据的变化
+- 如果一个属性是由其他属性计算而来的，这个属性依赖其他属性，是一个多对一或者一对一，一般用computed
+
+侦听属性watch
+
+- 不支持缓存，数据变，直接会触发相应的操作
+- 支持异步
+- 当一个属性发生变化时，需要执行对应的操作；一对多
+- 监听数据必须是data中声明过或者父组件传递过来的props中的数据
+
 区别：
 
 （1）computed能完成的功能，watch都可以完成
 
 （2）watch能完成的功能，computed不一定能完成，例如：watch可以进行异步操作
+
+## $nextTick
+
+nextTick是在下次DOM更新循环结束之后执行延迟回调，在修改数据之后使用nextTick，则可以在回调中获取更新后的DOM。
+
+## computed和methods
+
+computed访问的时候会直接返回已缓存的结果，而不会像methods一样再次计算
 
 ## 条件渲染v-if/v-show
 
@@ -3347,17 +3384,280 @@ Vue.js通过编译将模板转换成渲染函数，执行渲染函数就可以�
 
 注意：使用v-if时，元素可能无法获取到，而使用v-show一定可以获取到
 
+## v-for和v-if的优先级
+
+当v-if与v-for一起使用时，v-for具有比v-if更高的优先级，每v-for循环一次都要进行v-if判断，影响性能。
+
+解决方案：（1）在外层嵌套template，在这里进行v-if判断，然后内部进行v-for循环 （2）如果条件出现在循环内部，可以通过计算属性提前过滤掉那些不需要显示的项
+
+## vue常见的修饰符
+
+- .stop：阻止单击事件冒泡
+- .prevent：阻止事件的默认行为
+- .self：当事件发生在该元素本身而不是子元素的时候会触发
+- .once：只渲染一次，第二次不会执行
+
+## keep-alive的作用是什么
+
+keep-alive用来缓存组件，避免多次加载响应组件，减少性能消耗。简单来说，就是页面1跳转到页面2，再退回到页面1，这时候不用重新执行页面1的代码，只会从缓存中加载之前已经缓存的页面1，这样可以减少加载时间及性能消耗。比如：当需要频繁切换路由时，可以使用keep-alive来达到避免重复请求数据的目的。
+
+## vue中如何获取DOM
+
+利用vue提供的API，在DOM标签属性上加一个ref=“domName”，然后通过vue实例的this.$refs.domName来直接获取这个元素的节点。
+
+## Vue.set/this.$set
+
+如果在实例创建之后添加新的属性到实例上，它不会触发视图更新。可以使用Vue.set(target,key,value)方法向嵌套对象添加响应式属性。Vue.set()和this.$set()这两个api的实现原理一模一样，都是使用了set函数。区别就在于Vue.set()是将set函数绑定在Vue构造函数上，this.$set()是将set函数绑定在Vue原型上。
+
 ## 组件间的通信
 
-props:用于父子组件通信
-插槽:父子
-自定义事件:子父@on，@emit，可以实现子给父通信
-全局事件总线$bus:万能
-pubsub:万能，vue当中几乎不用
-Vuex:万能
-$ref:父子通信
+**父组件向子组件传递数据**
+
+```js
+// 父组件
+<child value = '传递数据' />
+// 子组件
+// 第一种方式：只接收
+props: ['value']
+// 第二种方式：限制接收数据的类型
+props: {value: String}
+// 第三种方式：限制类型、限制必要性、指定默认值
+props: {
+    value: {
+        type: String,
+        required: true,
+        default: 'offer' // 默认值
+    }
+}
+```
+
+**注意**：props是只读的，Vue底层会监测你对props的修改，如果进行了修改，就会发出警告，若业务需求确实需要修改，那么请复制props的内容到data中一份，然后去修改data中的数据。
+
+**插槽(父组件向子组件指定位置插入html结构)**
+
+**子组件向父组件传递数据**
+
+```js
+// 在父组件中给子组件绑定一个自定义事件
+// 第一种方式
+<Demo @atguigu="test" /> 
+<Demo v-on:atguigu="test" />
+// 第二种方式
+<Demo ref="demo">
+mounted() {
+    this.$refs.demo.$on('atguigu',this.test)
+}
+// 子组件通过$emit()触发该事件并传值
+this.$emit('atguigu','传递的数据')
+```
+
+**全局事件总线(适用于任意组件间通信)**
+
+```js
+// A组件要接收数据，则在A组件中给$bus绑定自定义事件，事件的回调留在A组件自身
+methods() {
+    demo(data) {
+        ......
+    }
+}
+mounted() {
+    this.$bus.$on('xxx',this.demo)
+}
+// B组件提供数据，则在B组件中通过$emit()触发该事件并传值
+this.$bus.$emit('xxx','传递的数据')
+```
+
+**消息订阅与发布(适用于任意组件间通信)**
+
+```js
+// A组件要接收数据，则在A组件中订阅消息，订阅的回调留在A组件自身
+methods() {
+    demo(data) {
+        ......
+    }
+}
+mounted() {
+    this.pId = pubsub.subscribe('xxx',this.demo) // 订阅消息
+}
+// B组件提供数据
+pubsub.publish('xxx','数据')
+```
+
+**Vuex(适用于任意组件间通信)**
+
+**Vuex是什么**
+
+Vuex是官方提供的一个插件，状态管理库，可以集中式管理项目中组件的共用数据。vuex就是一个数据仓库，将项目中共用的数据放入仓库中，哪个组件需要共用的数据就从仓库中要。
+
+**书写任何项目都需要vuex吗**
+
+并不是全部项目都需要vuex，如果项目很小，完全不需要vuex；项目大的时候，组件很多，数据很多，数据维护比较费劲，这就需要有一个地方‘统一管理数据’即为仓库store。
+
+**vuex的基本使用**
+
+（1）安装vuex：npm install --save vuex
+
+（2）配置仓库vuex
+
+在src目录下新建一个文件夹store/index.js；
+
+引入插件import Vue from ‘vue’,import Vuex from ‘vuex’
+
+使用插件Vue.use(Vuex)
+
+对外暴露一个Store类的实例
+
+```js
+export default new Vuex.store({
+state: {}; // 仓库存储数据的地方
+mutations: {}; // 修改state中数据的唯一手段
+actions: {}; // 处理action，可以书写自己的业务逻辑，也可书写异步任务
+getters: {}; // 理解为计算属性，简化仓库数据，让组件更方便的获取数据
+modules: {}; // 实现vuex仓库模块式开发存储数据
+})
+```
+
+（3）在main.js中引入仓库
+
+```js
+import store from '@/store'
+```
+
+（4）注册仓库
+
+```js
+// 当仓库组件注册后，组件实例身上会多一个属性$store
+new Vue({
+    		reder: h=>h(App), 
+    		router, 
+    		store
+		}).$mount(‘#app’)
+```
+
+（5）具体使用
+
+```js
+// 在Home模块有一个计数器，点击加1
+//（Home组件index.vue）
+<template>
+<button @click=”add”>点击加1</button>
+<span>仓库的数据{{count}}</span>  // 可以使用组件Home身上的count数据
+</template>
+<script>
+import {mapState} from ‘vuex’
+export default {
+computed: {
+...mapState([‘count’]); // 此时组件Home身上就有count数据
+},
+methods: {
+add() {
+// 派发action
+this.$store.dispatch(‘add’)
+}
+}
+}
+</script>
+
+// store仓库index.js
+const state = {count: 1};
+const mutations = {
+ADD(state) {
+state.count++;
+}
+}
+const actions = {
+// 可以书写业务逻辑，但是不能修改state
+add({commit}) {
+commit(“ADD”);
+}
+}
+```
+
+**vuex实现模块式开发**
+
+如果项目过大，组件过多，接口也很多，数据也很多，可以让Vuex实现模块式开发
+
+（1）在store文件夹中新建小仓库home，search，detail，user等等，每个小仓库只负责自己模块的数据，小仓库中新建index.js书写核心代码state，mutations，actions，getters，并暴露
+
+```js
+export default {state,mutations,actions,getters}
+```
+
+（2）将小仓库引入到大仓库
+
+```js
+// 在大仓库(store/index.js)中引入小仓库
+import home from './home';
+import search from './search'
+```
+
+（3）注册小仓库
+
+```js
+export default new Vuex.Store({
+    modules: {
+        home,
+        search
+    }
+})
+```
 
 ## 路由
+
+**什么是vue-router**
+
+Vue Router是Vue.js官方的路由管理器。它和Vue.js的核心深度集成，让构建单页面应用变得易如反掌。
+
+**如何使用vue-router**
+
+（1）安装vue-router：npm install --save vue-router
+
+（2）配置路由
+
+项目当中配置的路由一般放置在router文件夹中（新建router/index.js）
+
+```js
+import Vue from ‘vue’
+import VueRouter from ‘vue-router’
+Vue.use(VueRouter)
+import Home from ‘@/pages/Home’
+export default new VueRouter({
+    routes: [
+        {path: “/home”, components: “Home”},
+     	{ }
+    	]
+})
+```
+
+（3）在main.js中引入路由
+
+```js
+import router from '@/router'
+```
+
+（4）在根组件中注册路由
+
+```js
+new Vue({
+    		reder: h=>h(App), 
+    		router
+		}).$mount(‘#app’)
+```
+
+（5）展示路由组件
+
+```js
+// 书写在需要展示路由组件的位置，即路由出口
+<Header></Header>
+<router-view></router-view>
+<Footer></Footer>
+```
+
+**route和router的区别**
+
+$route一般用于获取当前路由组件信息【name、path、query、params】等
+
+$router一般用于编程式导航进行路由跳转【push|replace】
 
 ## 生命周期
 
@@ -3660,7 +3960,21 @@ app.use(userRouter)
 
 Ajax的全称是Asynchronous Javascript And XML（异步JavaScript和XML）。
 
-通俗的理解：在网页中利用XMLHttpRequest对象和服务器进行数据交互的方式，就是Ajax。
+通俗的理解：在网页中利用XMLHttpRequest对象和服务器进行数据交互的方式，就是Ajax。可以实现在不重新加载整个网页的情况下，与服务器交换数据，并更新部分网页。
+
+**Ajax的基本步骤**
+
+（1）创建XMLHttpRequest对象，也就是创建一个异步调用对象
+
+（2）创建一个新的HTTP请求，并指定该HTTP请求的方法和URL
+
+（3）设置响应HTTP请求状态变化的函数
+
+（4）发送HTTP请求
+
+（5）获取异步调用返回的数据
+
+（6）使用JavaScript和DOM实现局部刷新
 
 **原生Ajax使用XMLHttpRequest实现**
 
