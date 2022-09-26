@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html {
+      padding: 80px;
+      background-color: green;
+    }
+
+    body {
+      background-color: yellow;
+      height: 500px;
+      /* 好像是body必须设置高度才行好的 */
+      /* 我再测试一下 */
+      /* 如果html设置了背景色 body的背景色就不会覆盖document 如果没有设置的话body的背景色就会覆盖document */
+      /* 跟他俩的height没有关系那他俩设置不设置高度没啥用吗 一般都是不设置的 让内容撑开那一般情况下就按谁绝对定位 */
+      /* 一般情况下absolute不会相对于body和html，我没见过这样的好的 */
+    }
+
+    .box {
+      position: absolute;
+      top: 50px;
+      left: 80px;
+      height: 100px;
+      width: 200px;
+      background-color: pink;
+    }
+
+    .abso {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      width: 200px;
+      height: 200px;
+      background-color: pink;
+    }
+
+    .fix {
+      position: fixed;
+      top: 20px;
+      left: 30px;
+      width: 200px;
+      height: 200px;
+      background-color: blue;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div class="abso"></div> -->
+  <!-- <div class="fix"></div> -->
+  <div class="box"></div>
+</body>
+
+</html>
